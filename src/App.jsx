@@ -6,6 +6,8 @@ import ErrorPage from "@/pages/ErrorPage";
 
 //testpage
 import TestInputPage from "@/pages/TestInputPage"; 
+import TestPageButton from "@/pages/TestPageButton"
+import ThemeSelectionPage from "@/pages/ThemeSelectionPage"
 
 
 function App() {
@@ -13,7 +15,7 @@ function App() {
     <Routes>
        <Route path="/" element={<LandingPage />}></Route> 
 
-      <Route path="/testinput" element={<TestInputPage />}></Route> 
+  
 
 
       <Route path={routes.auth} element={<AuthPage />}></Route>
