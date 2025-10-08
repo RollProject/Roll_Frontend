@@ -15,12 +15,14 @@ function App() {
     <Routes>
        <Route path="/" element={<LandingPage />}></Route> 
 
-  
+      <Route path="/testinput" element={<TestInputPage />}></Route> 
+      <Route path="/testButton" element={<TestPageButton />}></Route>
+      <Route path="/testTheme" element={<ThemeSelectionPage />}></Route>
 
 
-      <Route path={routes.auth} element={<AuthPage />}></Route>
-      <Route path={routes.home} element={<LandingPage />}></Route>
-      <Route path="*" element={<ErrorPage />} />
+      <Route path={routes.auth} element={<AuthPage />} />
+            
+            <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 }
