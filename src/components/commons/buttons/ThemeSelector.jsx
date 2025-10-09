@@ -12,15 +12,13 @@ import React from "react";
 function ThemeSelector({ themeName, imageUrl, isSelected = false, onClick, ...rest }) {
   
   // 공통 기본 스타일: 둥근 모서리, 패딩, 부드러운 전환 효과, 투명도
-  const baseStyle = 
-    "flex items-center p-3 gap-4 rounded-[12px] cursor-pointer transition-all duration-200 opacity-50"; 
+   const baseStyle = 
+    "flex items-center p-3 gap-4 rounded-[12px] cursor-pointer transition-all duration-200"; 
     
-  // 선택 상태에 따른 스타일
   const selectedStyle = isSelected 
-    ? "border-[2px] border-black bg-white shadow-lg opacity-100" //  선택됨: 두꺼운 테두리 및 투명도 0
-   : "border border-gray-300 bg-gray-50 hover:bg-gray-100 hover:opacity-75"; // 선택 안됨: 연한 테두리 및 호버 효과
-
-  // 미리보기 이미지 스타일
+    ? "border-[2px] border-black bg-white shadow-lg opacity-100"  //선택되면 진하게
+    : "border border-gray-300 bg-gray-50 opacity-50 hover:opacity-75";  //선택안된건 불투명도 낮춰서 흐릿하게
+  
   const imageStyle = "w-16 h-16 rounded-lg object-cover";
 
   return (
