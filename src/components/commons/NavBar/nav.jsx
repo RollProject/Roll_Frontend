@@ -2,7 +2,6 @@
 
 import React from "react";
 import { NavLink } from "react-router-dom";
-import "../../../styles/common/components/Nav.css"; 
 import SearchBar from './SearchBar'; 
 import { FaRegUserCircle } from "react-icons/fa"; 
 
@@ -10,29 +9,26 @@ const Nav = () => {
     const LOGO_SRC = "/Roll.png"; 
 
     return (
-        <nav className="main-navbar">
+        <nav className="fixed top-0 left-0 w-full flex items-center justify-between bg-white p-4 shadow-md z-50">
             
-            {/* 1. 왼쪽: 로고 (NavLink) */}
-            <div className="nav-item logo-container">
-                <NavLink to="/" className="logo-link">
+            <div className="flex-shrink-0">
+                <NavLink to="/" className="flex items-center space-x-2">
                     <img 
                         src={LOGO_SRC} 
                         alt="서비스 로고" 
-                        className="app-logo-image" 
+                        className="h-8 w-auto"
                     />
                 </NavLink>
             </div>
             
-            {/* 2. 중앙: 검색창 */}
-            <div className="nav-item search-container">
+            <div className="flex-grow flex justify-center px-8">
                 <SearchBar /> 
             </div>
             
-            {/* 3. 오른쪽: 마이페이지 아이콘 */}
-            <div className="nav-item mypage-nav">
-                <NavLink to="/mypage" className="nav-link">
-                    <FaRegUserCircle size="24" className="mypage-icon" /> 
-                    <span className="nav-text">MyPage</span>
+            <div className="flex-shrink-0">
+                <NavLink to="/mypage" className="flex flex-col items-center text-black text-xs space-y-0.5">
+                    <FaRegUserCircle size="24" /> 
+                    <span>MyPage</span>
                 </NavLink>
             </div>
         </nav>
