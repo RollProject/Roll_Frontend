@@ -1,6 +1,5 @@
 import React from "react";
-import { TEXT_AREA_BASE_STATIC } from './inputStyles'; 
-// 폰트 외의 스타일만 가져옴
+import { TEXT_AREA_BASE_STATIC } from '@/components/commons/Inputs/inputStyles';
 
 /**
  * 다중 라인 텍스트 입력 컴포넌트 (Textarea)

@@ -1,5 +1,5 @@
 import React from "react";
-import { DROPDOWN_BASE_STATIC } from './inputStyles';
+import { DROPDOWN_BASE_STATIC } from '@/components/commons/Inputs/inputStyles';
 
 /**
  * 기본 드롭다운 선택 컴포넌트
