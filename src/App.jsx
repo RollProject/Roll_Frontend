@@ -6,8 +6,8 @@ import ErrorPage from "@/pages/ErrorPage";
 
 //testpage
 import TestInputPage from "@/pages/TestInputPage"; 
-import TestPageButton from "@/pages/TestPageButton"
-import ThemeSelectionPage from "@/pages/ThemeSelectionPage"
+import TestPageButton from "@/pages/TestPageButton"; 
+
 
 
 function App() {
@@ -17,10 +17,11 @@ function App() {
 
       <Route path="/testinput" element={<TestInputPage />}></Route> 
       <Route path="/testButton" element={<TestPageButton />}></Route>
-      <Route path="/testTheme" element={<ThemeSelectionPage />}></Route>
-
+      
 
       <Route path={routes.auth} element={<AuthPage />} />
+            {/* routes.home은 '/'이므로 index 라우트로 대체되어 제거하는 것이 좋습니다. */}
+            {/* <Route path={routes.home} element={<LandingPage />}></Route> */}
             
             <Route path="*" element={<ErrorPage />} />
     </Routes>
