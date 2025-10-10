@@ -10,7 +10,8 @@ import { DROPDOWN_BASE_STATIC } from '@/components/commons/Inputs/inputStyles';
  * @param {function} props.onChange - 값이 변경될 때 호출되는 이벤트 핸들러
  * @param {object} [props.rest] - 기타 모든 HTML Select 속성 (disabled, name, id 등)
  */
-function Dropdown({ options, value, onChange, ...rest }) {
+
+function Dropdown({ options = [], value, onChange, ...rest }) {
     
   return (
     <div className="relative">

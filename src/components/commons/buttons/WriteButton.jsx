@@ -1,9 +1,7 @@
-// src/components/commons/buttons/FAB.jsx
-
 import React from "react";
 
 /**
- * 플로팅 액션 버튼 (FAB): 오른쪽 하단에 고정된 주요 액션 버튼입니다.
+ * 플로팅 액션 버튼 : 오른쪽 하단에 고정된 주요 액션 버튼입니다.
  *
  * @param {object} props - 컴포넌트 props
  * @param {function} props.onClick - 버튼 클릭 시 실행될 이벤트 핸들러 (필수)
@@ -24,7 +22,6 @@ function WriteButton({ onClick, children, bgColor = "bg-black", textColor = "tex
       onClick={onClick}
       {...rest}
     >
-      {/* ⭐️ children이 제공되지 않으면 '+' 아이콘을 기본값으로 사용합니다. */}
       {children || (
         <svg 
           className="w-8 h-8" 
