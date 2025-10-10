@@ -16,9 +16,10 @@ function ColorBox({ color, isSelected = false, onClick, ...rest }) {
     "w-14 h-14 rounded-xl shadow-md transition-all duration-150 ease-in-out cursor-pointer";
     
   // 선택 박스 테두리
-  const selectedStyle = isSelected 
-    ? "ring-2 ring-offset-2 ring-black border-[2px] border-gray-400" // 선택시 두꺼운 테두리
-    : "hover:shadow-lg"; // 선택 안됨 마우스 올리며 그림자 효과
+   const selectedStyle = isSelected 
+    //색 선택시 테두리 간격지우기
+    ? "border-[1px] border-black" 
+    : "hover:shadow-lg"; 
 
   return (
 
