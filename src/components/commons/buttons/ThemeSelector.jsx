@@ -29,7 +29,8 @@ function ThemeSelector({ themeName, imageUrl, isSelected = false, onClick, ...re
     >
       {/* 1. 미리보기 이미지 */}
       {/* 선택 상태에 따라 이미지 주변 테두리 스타일 적용 */}
-      <div className={`flex-shrink-0 ${isSelected ? "border-[2px] border-black" : "border border-gray-300"} rounded-lg overflow-hidden`}>
+      {/* 선택시 이미지 파일에 검은색 테두리 지움 */}
+       <div className="flex-shrink-0 rounded-lg overflow-hidden border border-transparent"> 
           <img 
               src={imageUrl} 
               alt={`${themeName} 미리보기`}
