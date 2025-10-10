@@ -7,7 +7,8 @@ import ErrorPage from "@/pages/ErrorPage";
 //testpage
 import TestInputPage from "@/pages/TestInputPage"; 
 import TestPageButton from "@/pages/TestPageButton"; 
-
+import TestGridItem from "@/pages/TestGridItem"; 
+import TestFullmsg from "@/pages/TestFullMsgBoard"; 
 
 
 function App() {
@@ -15,13 +16,13 @@ function App() {
     <Routes>
        <Route path="/" element={<LandingPage />}></Route> 
 
+      {/* 컴포넌트 테스트 페이지 */}
       <Route path="/testinput" element={<TestInputPage />}></Route> 
       <Route path="/testButton" element={<TestPageButton />}></Route>
-      
+      <Route path="/testgrid" element={<TestGridItem />}></Route>
+      <Route path="/testmsg" element={<TestFullmsg />}></Route>
 
       <Route path={routes.auth} element={<AuthPage />} />
-            {/* routes.home은 '/'이므로 index 라우트로 대체되어 제거하는 것이 좋습니다. */}
-            {/* <Route path={routes.home} element={<LandingPage />}></Route> */}
             
             <Route path="*" element={<ErrorPage />} />
     </Routes>
