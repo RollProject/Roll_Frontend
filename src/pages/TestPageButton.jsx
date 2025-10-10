@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+
 import ColorBox from '@/components/commons/buttons/ColorBox.jsx'; 
 import ThemeSelector from '@/components/commons/buttons/ThemeSelector';
-
 
 const TestColors = () => {
     // 선택된 색상 상태를 관리합니다. (초기값은 파란색)
@@ -17,7 +17,7 @@ const TestColors = () => {
         'bg-lime-200',    
         'bg-orange-200',  
         'bg-white'        
-    ];
+    ];  
 
     return (
         <div className="p-8 max-w-2xl mx-auto space-y-8 bg-white shadow-xl mt-10">
@@ -46,14 +46,27 @@ const TestColors = () => {
         </div>
     );
 };
+
+//테마는 프리미엄유저만 사용함
 const THEMES = [
-    // public 폴더 직속 이미지 경로라고 가정합니다.
-    { id: 'snow', name: '눈 테마 적용하기', image: '/snow.svg' },
-    { id: 'rainbow', name: '무지개 테마 적용하기', image: '/rainbow.svg' },
+    //유료버전인지 체크
+   { id: 'snow', name: '눈 테마 적용하기', image: '/snow.svg', type: 'premium' }, 
+    { id: 'rainbow', name: '무지개 테마 적용하기', image: '/rainbow.svg', type: 'premium' },
 ];
 
 const TestThemes = () => {
-    const [activeTheme, setActiveTheme] = useState('snow'); // 현재 선택된 테마 ID
+    const [activeTheme, setActiveTheme] = useState('null'); // 현재 선택된 테마 ID
+
+    const handleThemeClick = (themeId) => {
+        const selectedTheme = THEMES.find(t => t.id === themeId);
+
+        if (selectedTheme && selectedTheme.type === 'premium') {
+            alert("이 테마는 유료 버전에서 사용 가능합니다.");
+            return;
+        }
+        
+        setActiveTheme(themeId); 
+    };
 
     return (
         <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -65,7 +78,7 @@ const TestThemes = () => {
                         themeName={theme.name}
                         imageUrl={theme.image}
                         isSelected={activeTheme === theme.id} // ID 일치 여부로 선택 상태 결정
-                        onClick={() => setActiveTheme(theme.id)} // 클릭 시 상태 업데이트
+                        onClick={() => handleThemeClick(theme.id)}  // 클릭 시 상태 업데이트
                     />
                 ))}
             </div>
@@ -84,7 +97,6 @@ function TestPageButton() {
             <TestColors />
             <TestThemes />
 
-            {/* 참고: 이전에 만든 TextInput 테스트 페이지의 내용을 여기에 추가할 수도 있습니다. */}
         </div>
     );
 }
