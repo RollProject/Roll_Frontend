@@ -5,13 +5,13 @@ import TextArea from '@/components/commons/Inputs/TextArea';
 import Dropdown from '@/components/commons/Inputs/Dropdown';
 import RotatedMemoCard from '@/components/commons/Inputs/RotatedMemoCard';
 import WriteButton from '@/components/commons/buttons/WriteButton';
-import { FONT_OPTIONS } from '@/components/commons/Inputs/inputStyles';
+import { FONT_OPTIONS } from '@/utils/constants/fontOptions.js';
 
 function TestInputPage() {
     // 폼 상태 관리
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
-    const [fontStyle, setFontStyle] = useState(FONT_OPTIONS[0].value); 
+    const [fontStyle, setFontStyle] = useState(FONT_OPTIONS[0].value);
 
     // 드롭다운 변경
     const handleFontChange = (e) => {
@@ -79,6 +79,7 @@ function TestInputPage() {
                             content={message || "메시지를 입력해 보세요."} 
                             fontStyle={fontStyle} 
                             bgColor="bg-yellow-100" 
+                            alignTop
                         />
                     </div>
                 </div>
