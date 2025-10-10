@@ -2,6 +2,7 @@ import React from 'react';
 
 /**
  * 롤링페이퍼 메시지 내용을 표시하는 회전된 메모지 카드 컴포넌트입니다.
+ * 이 컴포넌트는 GridItem에 의해 호출되며, 각도(rotationDegree)를 Prop으로 받습니다.
  *
  * @param {object} props - 컴포넌트 props
  * @param {string} props.content - 표시할 메시지 내용
@@ -11,12 +12,6 @@ import React from 'react';
  * @param {boolean} [props.alignTop=false] - 메세지 종류에 따른 정렬 방식
  * @param {string} [props.className] - 추가 클래스
  */
-function RotatedMemoCard({ content, fontStyle, bgColor = 'bg-yellow-100', className = '' }) {
-    
-    // -5도에서 5도 사이의 랜덤 각도를 계산하여 메모지 카드의 시각적 흥미를 높입니다.
-    const rotationDegree = useMemo(() => {
-        return Math.floor(Math.random() * 11) - 5; // -5에서 5
-    }, []);
 
 const MAX_PREVIEW_LENGTH = 75;
 function RotatedMemoCard({ 
@@ -33,6 +28,12 @@ function RotatedMemoCard({
 
     const baseStyle = 
         "w-48 h-48 p-4 rounded-xl transition-all duration-300 overflow-hidden relative"; 
+
+        
+    //메세지 종류에 따른 정렬 방식 구분
+    const textAlignmentStyle = alignTop
+        ? { display: 'block', textAlign: 'left', alignItems: 'flex-start' } // 상단 정렬 (메시지 상세 내용)
+        : { display: 'flex', alignItems: 'center', justifyContent: 'center' }; // 중앙 정렬 (제목 미리보기)
 
     return (
         <div 
