@@ -14,7 +14,7 @@ import React from 'react';
  */
 
 const MAX_PREVIEW_LENGTH = 75;
-function RotatedMemoCard({ 
+function Card({ 
     content, 
     fontStyle, 
     bgColor, 
@@ -27,12 +27,12 @@ function RotatedMemoCard({
         : content;
 
     const baseStyle = 
-        "w-48 h-48 p-4 rounded-xl transition-all duration-300 overflow-hidden relative"; 
-
+        "w-full h-full rounded-xl shadow-lg transition-all duration-300 relative overflow-hidden"; 
+    
         
     //메세지 종류에 따른 정렬 방식 구분
     const textAlignmentStyle = alignTop
-        ? { display: 'block', textAlign: 'left', alignItems: 'flex-start' } // 상단 정렬 (메시지 상세 내용)
+        ? { display: 'block', textAlign: 'left' } // ⭐️ 상단 정렬: Flexbox를 제거하고 block, 왼쪽 정렬만 사용 ⭐️
         : { display: 'flex', alignItems: 'center', justifyContent: 'center' }; // 중앙 정렬 (제목 미리보기)
 
     return (
@@ -42,7 +42,7 @@ function RotatedMemoCard({
                 transform: `rotate(${rotationDegree}deg)`,
                 backgroundImage: `url('/memo.svg')`,
                 backgroundRepeat: 'no-repeat',
-                backgroundSize: '100% 100%', 
+                backgroundSize: 'cover', 
                 backgroundPosition: 'center',
             }}
         >
@@ -60,4 +60,4 @@ function RotatedMemoCard({
     );
 }
 
-export default RotatedMemoCard;
+export default Card;

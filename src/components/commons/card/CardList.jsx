@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import RotatedMemoCard from './Inputs/RotatedMemoCard'; 
-
+import Card from '@/components/commons/card/Card'; 
 /**
  * 롤링페이퍼 목록 그리드 항목 컴포넌트입니다.
  * (메인 화면 미리보기 또는 상세 목록 뷰에 사용)
@@ -13,7 +12,7 @@ import RotatedMemoCard from './Inputs/RotatedMemoCard';
  * @param {boolean} [props.isFullView=false] - 상세 메시지 뷰 여부 (true: RotatedMemoCard 사용)
  * @param {function} [props.onClick] - 항목 클릭 이벤트 핸들러
  */
-function GridItem({ 
+function CardList({ 
     title, 
     content,       
     fontStyle,     
@@ -24,33 +23,36 @@ function GridItem({
 }) {
     
     const rotationDegree = useMemo(() => {
-        return Math.floor(Math.random() * 11) - 5; // -5도에서 5도 사이
+        return Math.floor(Math.random() * 3) - 1;
     }, []); 
 
+    
     //  isFullView (상세 메시지 뷰)일 때는 RotatedMemoCard를 렌더링 
     if (isFullView) {
         return (
-             <RotatedMemoCard 
+             <Card 
             content={content || title} 
             fontStyle={fontStyle || 'font-sans'}
             bgColor={themeStyle || 'bg-yellow-100'}
             rotationDegree={rotationDegree}
             alignTop={true} // 수정: 메시지 내용은 상단 정렬
-            className="m-2"
+            className="w-full h-full"
             onClick={onClick}
             {...rest}
         />
         );
     }
 
+    const backgroundStyle = themeStyle || "bg-white border border-gray-200"; 
+    
     //  isFullView가 아닐 때 (메인 미리보기) 로직 
     const simpleCardStyle = 
-        "w-48 h-48 rounded-lg flex justify-center items-center p-4 text-center text-base font-bold cursor-pointer";
-    
+        "w-full h-[140px] rounded-lg flex justify-center items-center p-4 text-center text-base font-bold cursor-pointer";
+
    return (
         <div 
-            className={`${simpleCardStyle} hover:shadow-lg transition-shadow`}
-            onClick={onClick}
+            className={`${simpleCardStyle} ${backgroundStyle} hover:shadow-lg transition-shadow`}
+        onClick={onClick}
             {...rest}
             style={{
                 backgroundImage: `url('/memo.svg')`,
@@ -66,4 +68,4 @@ function GridItem({
     );
 }
 
-export default GridItem;
+export default CardList;
