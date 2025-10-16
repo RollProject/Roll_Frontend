@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 import TextInput from "@/components/commons/Inputs/TextInput";
 import TextArea from "@/components/commons/Inputs/TextArea";
@@ -6,6 +6,7 @@ import Dropdown from "@/components/commons/Inputs/Dropdown";
 import RotatedMemoCard from "@/components/commons/card/Card";
 import WriteButton from "@/components/commons/buttons/WriteButton";
 import { FONT_OPTIONS } from "@/utils/constants/fontOptions.js";
+import Card from "@/components/commons/card/Card";
 
 function TestInputPage() {
   // 폼 상태 관리
@@ -22,7 +23,10 @@ function TestInputPage() {
   const handleFABClick = () => {
     alert("버튼이 클릭되었습니다! (새 메시지 작성 액션)");
   };
-
+  const rotationDegree = useMemo(() => {
+    // -5도에서 5도 사이의 랜덤 각도 (CardList의 회전 범위와 통일하는 것이 좋습니다. 현재는 -1 ~ 1도)
+    return Math.floor(Math.random() * 3) - 1;
+  }, []);
   return (
     <div className="relative min-h-screen">
       <div className="p-8 max-w-xl mx-auto space-y-10 bg-gray-50 border border-gray-200 rounded-lg shadow-lg mt-10 pb-20">
@@ -80,11 +84,14 @@ function TestInputPage() {
             작성 내용 미리보기 (회전 카드)
           </h2>
           <div className="flex flex-wrap justify-center h-64">
-            <RotatedMemoCard
-              content={message || "메시지를 입력해 보세요."}
-              fontStyle={fontStyle}
-              bgColor="bg-yellow-100"
-              alignTop
+            <Card
+              title={title} // ⭐️ 제목 Prop 전달 (필수)
+              content={message || "메시지를 입력해 보세요."} // ⭐️ 내용 Prop 전달
+              fontStyle={fontStyle} // ⭐️ 폰트 스타일 전달
+              isFullView={true} // ⭐️ 상세 내용 미리보기 모드로 설정
+              rotationDegree={rotationDegree} // ⭐️ 회전 각도 전달 (필수) ⭐️
+              // Card 컴포넌트는 GridItem의 역할을 하지 않으므로 grid-cols 클래스는 제거합니다.
+              className="w-full"
             />
           </div>
         </div>
