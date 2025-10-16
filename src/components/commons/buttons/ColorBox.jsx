@@ -16,8 +16,7 @@ function ColorBox({ color, isSelected = false, onClick, ...rest }) {
 
   // 선택 박스 테두리
   const selectedStyle = isSelected
-    ? //색 선택시 테두리 간격지우기
-      "border-[1px] border-black"
+    ? "border-[1px] border-black"
     : "hover:shadow-lg";
 
   return (
