@@ -15,14 +15,14 @@ function PopularCard({ id, text, image }) {
   return (
     <div
       key={id}
-      className="w-[100px] h-[110px] bg-cover bg-center flex items-center justify-center font-semibold text-center"
+      className="w-[125px] h-[135px] bg-cover bg-center flex items-center justify-center text-center"
       style={{
         transform: `rotate(${rotation}deg) translate(${offsetX}px, ${offsetY}px)`,
         backgroundImage: `url(${image})`,
         zIndex: id,
       }}
     >
-      <span className="text-black text-[12px] font-bold p-3 leading-tight">
+      <span className="text-black text-[13px] p-3 leading-tight">
         {formattedText}
       </span>
     </div>
