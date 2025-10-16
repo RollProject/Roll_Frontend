@@ -15,9 +15,9 @@ function BasicButton({ children, variant = "black", onClick }) {
   const baseStyle = "w-full h-full rounded-[15px] text-[16px]";
 
   const variants = {
-    black: "bg-black text-white font-bold hover:bg-gray-800",
+    black: "bg-black text-white hover:bg-gray-800",
     white:
-      "bg-white text-black font-bold border-[2px] border-black hover:bg-gray-100",
+      "bg-white text-black border-[2px] border-black hover:bg-gray-100",
   };
 
   return (
