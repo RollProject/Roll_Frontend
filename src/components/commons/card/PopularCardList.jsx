@@ -4,7 +4,7 @@ import PopularCard from "./PopularCard";
 function PopularCardList({ cards}) {
 
   return (
-    <div className="flex flex-wrap justify-center w-full mt-8">
+    <div className="flex flex-wrap justify-center w-full mt-1">
       {cards.map((card, i) => (
         <div
           key={card.id}

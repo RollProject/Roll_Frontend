@@ -15,14 +15,14 @@ function LandingPage() {
   return (
     <div>
       <Header leftContent="로고" rightContent="아이콘" />
-
-      <section className="flex flex-col gap-[70px] px-[25px] py-[25px]">
-        <div className="flex flex-col gap-[30px]">
+   
+      <section className="flex flex-col gap-[70px] px-[15px] py-[15px]">
+        <div className="flex flex-col gap-[30px] ">
           <SectionHeader title="인기 롤링페이퍼">
             <MoreButton label="더보기" onClick={() => navigate("/popular")} />
           </SectionHeader>
-          <div>
-            <PopularCardList cards={cards}/>
+          <div className="">
+            <PopularCardList cards={cards} />
           </div>
         </div>
 
@@ -41,7 +41,7 @@ function LandingPage() {
               </div>
             </div>
           ) : (
-            <div className="flex justify-center items-center w-full h-full py-8">
+            <div className="flex justify-center items-center w-full h-full">
               <img
                 src={noCardImage}
                 alt="빈 롤링페이퍼 이미지"
