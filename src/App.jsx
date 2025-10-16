@@ -5,19 +5,19 @@ import LandingPage from "@/pages/LandingPage";
 import ErrorPage from "@/pages/ErrorPage";
 
 //testpage
-import TestInputPage from "@/pages/TestInputPage"; 
-import TestPageButton from "@/pages/TestPageButton"; 
-import TestBoardButton from "@/pages/TestBoardPage"; 
-import TestGridItem from "@/pages/TestGridItem"; 
-import TestFullmsg from "@/pages/TestFullMsgBoard"; 
+import TestInputPage from "@/pages/TestInputPage";
+import TestPageButton from "@/pages/TestPageButton";
+import TestBoardButton from "@/pages/TestBoardPage";
+import TestGridItem from "@/pages/TestGridItem";
+import TestFullmsg from "@/pages/TestFullMsgBoard";
 
 function App() {
   return (
     <Routes>
-       <Route path="/" element={<LandingPage />}></Route> 
+      <Route path="/" element={<LandingPage />}></Route>
 
       {/* 입력 칸 종합 테스트 페이지 */}
-      <Route path="/testinput" element={<TestInputPage />}></Route> 
+      <Route path="/testinput" element={<TestInputPage />}></Route>
       {/* 버튼 종합 테스트 페이지 */}
       <Route path="/testButton" element={<TestPageButton />}></Route>
       {/* 모달, 플러스 버튼 테스트 페이지 */}
@@ -28,8 +28,8 @@ function App() {
       <Route path="/testmsg" element={<TestFullmsg />}></Route>
 
       <Route path={routes.auth} element={<AuthPage />} />
-            
-            <Route path="*" element={<ErrorPage />} />
+
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 }

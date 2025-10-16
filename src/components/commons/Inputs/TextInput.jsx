@@ -1,5 +1,5 @@
 import React from "react";
-import { TEXT_INPUT_BASE }  from '@/components/commons/Inputs/inputStyles';
+import { TEXT_INPUT_BASE } from "@/components/commons/Inputs/inputStyles";
 
 /**
  * 기본 단일 라인 텍스트 입력 컴포넌트 (밑줄 스타일)
@@ -11,14 +11,13 @@ import { TEXT_INPUT_BASE }  from '@/components/commons/Inputs/inputStyles';
  * @param {object} [props.rest] - 기타 모든 HTML Input 속성 (type, disabled, name 등)
  */
 function TextInput({ placeholder, value, onChange, ...rest }) {
-  
   return (
     <input
       type="text"
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className={TEXT_INPUT_BASE} 
+      className={TEXT_INPUT_BASE}
       {...rest}
     />
   );

@@ -10,10 +10,15 @@ import React from "react";
  * @param {string} [props.textColor="text-white"] - 버튼 내부 아이콘/텍스트 색상 Tailwind 클래스
  * @param {object} [props.rest] - 기타 모든 HTML Button 속성
  */
-function WriteButton({ onClick, children, bgColor = "bg-black", textColor = "text-white", ...rest }) {
-  
+function WriteButton({
+  onClick,
+  children,
+  bgColor = "bg-black",
+  textColor = "text-white",
+  ...rest
+}) {
   // 기본 스타일: 원형, 고정 크기, 그림자, 부드러운 전환 효과
-  const baseStyle = 
+  const baseStyle =
     "w-14 h-14 rounded-full shadow-xl fixed bottom-6 right-6 flex items-center justify-center z-50 transition-transform duration-200 ease-in-out hover:scale-105";
 
   return (
@@ -23,14 +28,19 @@ function WriteButton({ onClick, children, bgColor = "bg-black", textColor = "tex
       {...rest}
     >
       {children || (
-        <svg 
-          className="w-8 h-8" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24" 
+        <svg
+          className="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 4v16m8-8H4"
+          ></path>
         </svg>
       )}
     </button>

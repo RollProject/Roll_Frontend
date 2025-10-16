@@ -1,5 +1,5 @@
 import React from "react";
-import { DROPDOWN_BASE_STATIC } from '@/components/commons/Inputs/inputStyles';
+import { DROPDOWN_BASE_STATIC } from "@/components/commons/Inputs/inputStyles";
 
 /**
  * 기본 드롭다운 선택 컴포넌트
@@ -12,7 +12,6 @@ import { DROPDOWN_BASE_STATIC } from '@/components/commons/Inputs/inputStyles';
  */
 
 function Dropdown({ options = [], value, onChange, ...rest }) {
-    
   return (
     <div className="relative">
       <select
@@ -22,10 +21,7 @@ function Dropdown({ options = [], value, onChange, ...rest }) {
         {...rest}
       >
         {options.map((option) => (
-          <option 
-            key={option.value} 
-            value={option.value}
-          >
+          <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}

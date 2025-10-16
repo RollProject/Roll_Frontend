@@ -10,25 +10,22 @@ import React from "react";
  * @param {object} [props.rest] - 기타 모든 HTML Div 속성 (className 등)
  */
 function ColorBox({ color, isSelected = false, onClick, ...rest }) {
-
   // 공통 스타일: 둥근 모서리, 고정 크기
   const baseStyle =
     "w-14 h-14 rounded-xl shadow-md transition-all duration-150 ease-in-out cursor-pointer";
 
   // 선택 박스 테두리
   const selectedStyle = isSelected
-    //색 선택시 테두리 간격지우기
-    ? "border-[1px] border-black"
+    ? //색 선택시 테두리 간격지우기
+      "border-[1px] border-black"
     : "hover:shadow-lg";
 
   return (
-
     <div
       className={`${baseStyle} ${color} ${selectedStyle}`}
       onClick={onClick}
       {...rest}
-    >
-    </div>
+    ></div>
   );
 }
 
