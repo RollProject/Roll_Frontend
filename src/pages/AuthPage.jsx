@@ -2,7 +2,8 @@ import BasicButton from "@/components/commons/buttons/BasicButton";
 
 function AuthPage() {
   const handleLogin = () => {
-    console.log("Login button clicked");
+    // 백엔드로 이동 (리디렉션)
+    window.location.href = "http://localhost:3000/auth/kakao/login";
   };
 
   return (
