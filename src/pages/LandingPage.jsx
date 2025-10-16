@@ -18,20 +18,19 @@ function LandingPage() {
     const checkSession = async () => {
       try {
         const res = await fetch("http://localhost:3000/session", {
-          credentials: "include", // ✅ 세션 쿠키 포함 (필수)
+          credentials: "include", 
         });
         const data = await res.json();
-        console.log("📦 백엔드 세션 데이터:", data);
+        console.log("백엔드 세션 데이터:", data);
       } catch (err) {
-        console.error("❌ 세션 확인 실패:", err);
+        console.error("세션 확인 실패:", err);
       }
     };
 
     checkSession();
   }, []);
 
-  if (!user) return null; // 세션 확인 전엔 렌더 X
-
+  if (!user) return null; 
   return (
     <div>
       <Header leftContent="로고" rightContent={user.nickname || "아이콘"} />
