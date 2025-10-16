@@ -3,12 +3,14 @@ import SectionHeader from "@/components/commons/bar/SectionHeader";
 import MoreButton from "@/components/commons/buttons/MoreButton";
 import Chip from "@/components/commons/buttons/Chip";
 import noCardImage from "@/assets/no-card-image.svg";
-
+import PopularCardList from "@/components/commons/card/PopularCardList";
 import { useNavigate } from "react-router-dom";
+
+import cards from "@/mock/cards/popularCards";
 
 function LandingPage() {
   const navigate = useNavigate();
-  const myRollingPapers = []; 
+  const myRollingPapers = [];
 
   return (
     <div>
@@ -19,7 +21,9 @@ function LandingPage() {
           <SectionHeader title="인기 롤링페이퍼">
             <MoreButton label="더보기" onClick={() => navigate("/popular")} />
           </SectionHeader>
-          <div>내용</div>
+          <div>
+            <PopularCardList cards={cards}/>
+          </div>
         </div>
 
         <div className="flex flex-col gap-[30px]">
