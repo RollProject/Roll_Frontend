@@ -2,17 +2,18 @@ import BasicButton from "@/components/commons/buttons/BasicButton";
 
 function AuthPage() {
   const handleLogin = () => {
-    console.log("Login button clicked");
+    // 백엔드로 이동 (리디렉션)
+    window.location.href = "http://localhost:3000/auth/kakao/login";
   };
 
   return (
     <div className="flex flex-col items-center justify-center mt-[200px] bg-white px-[23px] gap-[75px]">
       <div className="flex flex-col gap-[24px] items-center">
         <div className="flex flex-col items-start gap-[2px]">
-          <p className="font-inter font-bold text-2xl leading-[36px] tracking-[-0.01em]">
+          <p className="font-inter text-2xl leading-[36px] tracking-[-0.01em]">
             <span className="text-[#727272]">롤링페이퍼</span>로
           </p>
-          <p className="font-inter font-bold text-2xl leading-[36px] tracking-[-0.01em]">
+          <p className="font-inter text-2xl leading-[36px] tracking-[-0.01em]">
             따뜻한 한마디를 전해보세요.
           </p>
         </div>
