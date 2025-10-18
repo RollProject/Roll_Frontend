@@ -16,7 +16,13 @@ export default defineConfig({
     },
   },
   server: {
-    host: true, // 또는 '0.0.0.0'으로 설정하면 모든 IP에서 접속 가능
-    port: 5173,
+    host: '0.0.0.0', // 모든 네트워크 인터페이스에서 접속 허용 (내부/외부 모두)
+    port: 80, // HTTP 기본 포트 사용
+    open: false, // 브라우저 자동 열기 비활성화
+    strictPort: true, // 포트가 사용중일 때 다른 포트로 변경하지 않음
+    hmr: {
+      host: 'localhost', // HMR 호스트 설정
+    },
+    allowedHosts: ['roll.iptime.org', '.iptime.org', 'localhost', '14.63.56.91'], // 허용된 호스트 명시적 지정
   },
 });

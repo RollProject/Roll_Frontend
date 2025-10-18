@@ -17,7 +17,7 @@ function LandingPage() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const res = await fetch("http:// data.1004photo.com:3000/session/session-info", {
+        const res = await fetch("http://roll.iptime.org:3000/session/session-info", {
           credentials: "include",
         });
 
