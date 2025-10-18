@@ -15,4 +15,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    host: true, // 또는 '0.0.0.0'으로 설정하면 모든 IP에서 접속 가능
+    port: 5173,
+  },
 });
