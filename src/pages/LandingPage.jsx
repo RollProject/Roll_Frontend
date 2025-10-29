@@ -27,17 +27,15 @@ function LandingPage() {
 
   const [popularCards, setPopularCards] = useState([]);
 
-  // 인기 리스트 불러오기 (보드 id/제목만 사용 + 메모 배경 고정 순환)
   useEffect(() => {
     async function fetchPopular() {
-      const list = await getPopularList(); // [{ RB_id, RB_title, ...}]
+      const list = await getPopularList(); 
       const mapped = (list ?? []).map((b, i) => ({
         id: b.RB_id,
         text: b.RB_title,
         image: memoImages[i % memoImages.length],
       }));
 
-      // 12개 고정 채우기 (부족하면 더미)
       const filled = [...mapped];
       while (filled.length < FIXED_COUNT) {
         filled.push({
@@ -52,7 +50,6 @@ function LandingPage() {
     fetchPopular();
   }, []);
 
-  // 세션 확인
   useEffect(() => {
     const checkSession = async () => {
       try {
