@@ -24,12 +24,40 @@ const memoImages = [memo1, memo2, memo3, memo4, memo5, memo6];
 function LandingPage() {
   const navigate = useNavigate();
   const { user, setUser } = useUserStore();
-
   const [popularCards, setPopularCards] = useState([]);
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/me", {
+          credentials: "include", // ✅ 쿠키 세션 포함
+        });
 
+        const data = await res.json();
+        console.log("🧠 /auth/me 응답:", data);
+
+        if (data.success) {
+          // ✅ Zustand 전역 상태 업데이트
+          setUser({
+            id: data.data.RU_id ?? data.data.kakao_id,
+            nickname: data.data.nickname,
+            profile_image: data.data.profile_image,
+            kakao_id: data.data.kakao_id,
+          });
+        } else {
+          console.warn("세션 만료:", data.message);
+          navigate("/auth"); // 로그인 페이지로 이동
+        }
+      } catch (err) {
+        console.error("❌ 세션 확인 중 오류:", err);
+        navigate("/auth");
+      }
+    };
+
+    fetchUserInfo();
+  }, [setUser, navigate]);
   useEffect(() => {
     async function fetchPopular() {
-      const list = await getPopularList(); 
+      const list = await getPopularList();
       const mapped = (list ?? []).map((b, i) => ({
         id: b.RB_id,
         text: b.RB_title,
@@ -59,6 +87,9 @@ function LandingPage() {
         if (!res.ok) throw new Error("세션 정보 요청 실패");
         const data = await res.json();
 
+        console.log("🟢 세션 응답 전체:", data);
+        console.log("👤 사용자 정보:", data.sessionData?.kakaoUser);
+
         if (data.sessionData?.kakaoUser) {
           setUser(data.sessionData.kakaoUser);
         } else {
@@ -69,6 +100,7 @@ function LandingPage() {
         navigate("/auth");
       }
     };
+
     checkSession();
   }, [setUser, navigate]);
 
