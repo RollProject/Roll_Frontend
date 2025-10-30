@@ -12,7 +12,7 @@ import React from "react";
 function ColorBox({ color, isSelected = false, onClick, ...rest }) {
   // 공통 스타일: 둥근 모서리, 고정 크기
   const baseStyle =
-    "w-14 h-14 rounded-xl shadow-md transition-all duration-150 ease-in-out cursor-pointer";
+    "w-full aspect-square rounded-xl shadow-md transition-all duration-150 ease-in-out cursor-pointer";
 
   // 선택 박스 테두리
   const selectedStyle = isSelected
