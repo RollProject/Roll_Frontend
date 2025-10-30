@@ -1,6 +1,6 @@
 import React from "react";
 
-function Card({ id, nickname, profileUrl, contents, font, bgImage }) {
+function Card({ id, nickname, profileUrl, contents, font, bgImage, onClick }) {
   const rotation = Math.random() * 10 - 5;
   const offsetX = Math.random() * 8 - 4;
   const offsetY = Math.random() * 6 - 3;
@@ -9,24 +9,21 @@ function Card({ id, nickname, profileUrl, contents, font, bgImage }) {
   return (
     <div
       key={id}
-      className={"w-[140px] h-[150px] bg-cover bg-center flex flex-col justify-between items-start p-3"}
+      className={
+        "w-[140px] h-[150px] bg-cover bg-center flex flex-col justify-between items-start p-3 cursor-pointer"
+      }
       style={{
         transform: `rotate(${rotation}deg) translate(${offsetX}px, ${offsetY}px)`,
         backgroundImage: `url(${bgImage})`,
         fontFamily: font,
       }}
+      onClick={onClick}
     >
       <div className="flex items-center gap-2">
         {profileUrl && (
-          <img
-            src={profileUrl}
-            alt="작성자"
-            className="w-6 h-6 rounded-full"
-          />
+          <img src={profileUrl} alt="작성자" className="w-6 h-6 rounded-full" />
         )}
-        <span className="text-[13px] text-gray-800 truncate">
-          {nickname}
-        </span>
+        <span className="text-[13px] text-gray-800 truncate">{nickname}</span>
       </div>
 
       <div className="flex-1 flex items-center justify-center w-full text-center">
