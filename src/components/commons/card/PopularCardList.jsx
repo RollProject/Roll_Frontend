@@ -1,8 +1,7 @@
 import React from "react";
-import PopularCard from "./PopularCard";
+import PopularCard from "@/components/commons/card//PopularCard";
 
-function PopularCardList({ cards}) {
-
+function PopularCardList({ cards }) {
   return (
     <div className="flex flex-wrap justify-center w-full mt-1">
       {cards.map((card, i) => (

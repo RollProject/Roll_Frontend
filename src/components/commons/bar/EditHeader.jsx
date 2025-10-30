@@ -13,10 +13,7 @@ function EditHeader({ title, onComplete }) {
   );
 
   const CompleteButton = () => (
-    <button
-      onClick={onComplete}
-      className="text-base font-bold text-black px-2 py-1"
-    >
+    <button onClick={onComplete} className="text-base text-black px-2 py-1">
       완료
     </button>
   );
@@ -27,7 +24,7 @@ function EditHeader({ title, onComplete }) {
         <CancelButton />
       </div>
 
-      <h2 className="flex-1 text-center text-lg font-bold truncate">{title}</h2>
+      <h2 className="flex-1 text-center text-lg truncate">{title}</h2>
 
       <div className="w-1/4 flex justify-end">
         <CompleteButton />

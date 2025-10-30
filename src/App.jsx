@@ -5,6 +5,8 @@ import LandingPage from "@/pages/LandingPage";
 import ErrorPage from "@/pages/ErrorPage";
 import EditPage from "@/pages/EditPage";
 
+import BoardPage from "./pages/BoardPage";
+
 function App() {
   return (
     <Routes>
@@ -12,6 +14,7 @@ function App() {
       <Route path={routes.auth} element={<AuthPage />} />
       <Route path="*" element={<ErrorPage />} />
       <Route path={routes.edit} element={<EditPage />} />
+      <Route path="board" element={<BoardPage />} />
     </Routes>
   );
 }
