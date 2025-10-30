@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
 import Header from "@/components/commons/bar/NavHeader";
 import noCardImage from "@/assets/no-card-image.svg";
 import CardList from "@/components/commons/card/CardList";
+import MemoModal from "@/components/commons/modal/MemoModal";
 import { getBoard } from "@/api/board/getBoard";
 
 function BoardPage() {
-  const [pageTitle, setPageTitle] = useState("로딩 중..."); 
-  const [cardsData, setCardsData] = useState([]); 
+  const [pageTitle, setPageTitle] = useState("로딩 중...");
+  const [cardsData, setCardsData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    title: "",
+    fullContent: "",
+    profileUrl: "",
+  });
 
   const myRollingPapers = [];
-
 
   useEffect(() => {
     async function fetchBoard() {
@@ -22,12 +28,13 @@ function BoardPage() {
         setPageTitle(result.board.RB_title);
 
         const mappedCards = result.papers.map((paper) => ({
-          id: paper.RP_id, 
-          title: paper.RU_nickname, 
-          text: paper.RP_contents, 
+          id: paper.RP_id,
+          title: paper.RU_nickname,
+          text: paper.RP_contents,
+          image: paper.RU_profile_url,
           bgColor: paper.RP_bgcolor,
           font: paper.RP_font,
-          profileUrl: paper.RU_profile_url, 
+          profileUrl: paper.RU_profile_url,
         }));
 
         setCardsData(mappedCards);
@@ -38,13 +45,22 @@ function BoardPage() {
     }
 
     fetchBoard();
-  }, []); 
+  }, [boardId]);
+
+  const handleCardClick = (cardData) => {
+    setModalContent({
+      title: cardData.title,
+      fullContent: cardData.text,
+      profileUrl: cardData.profileUrl,
+    });
+    setIsModalOpen(true);
+  };
 
   return (
     <div>
       <Header title={pageTitle} leftContent="back" rightContent="아이콘" />
       <div>
-        <CardList cards={cardsData} />
+        <CardList cards={cardsData} onCardClick={handleCardClick} />
       </div>
       <section className="flex flex-col gap-[70px] px-[25px] py-[25px]">
         <div className="flex flex-col gap-[30px]"></div>
@@ -52,10 +68,6 @@ function BoardPage() {
         <div className="flex flex-col gap-[30px]">
           {myRollingPapers.length > 0 ? (
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-100 rounded-lg h-[120px] flex items-center justify-center">
-                내용
-              </div>
-
               <div className="bg-gray-100 rounded-lg h-[120px] flex items-center justify-center">
                 내용
               </div>
@@ -71,6 +83,14 @@ function BoardPage() {
           )}
         </div>
       </section>
+
+      <MemoModal
+        title={modalContent.title}
+        fullContent={modalContent.fullContent}
+        profileUrl={modalContent.profileUrl}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

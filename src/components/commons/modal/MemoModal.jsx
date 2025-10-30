@@ -1,6 +1,6 @@
 import React from "react";
 
-function MemoModal({ title, fullContent, isOpen, onClose }) {
+function MemoModal({ title, fullContent, isOpen, onClose, profileUrl }) {
   if (!isOpen) return null;
 
   return (
@@ -14,7 +14,16 @@ function MemoModal({ title, fullContent, isOpen, onClose }) {
         className="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-xl font-bold border-b pb-2 mb-4">{title}</h3>
+        <div className="flex items-center gap-3 border-b pb-2 mb-4">
+          {profileUrl && (
+            <img
+              src={profileUrl}
+              alt="작성자 프로필"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          )}
+          <h3 className="text-xl font-bold">{title}</h3>
+        </div>
 
         {/* 3. 전체 내용 표시 */}
         <p className="whitespace-pre-wrap text-gray-700 max-h-80 overflow-y-auto">
