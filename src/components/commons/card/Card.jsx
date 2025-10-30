@@ -1,6 +1,6 @@
 import React from "react";
 
-function Card({ id, text, image }) {
+function Card({ id, text, image, onClick }) {
   const rotation = Math.random() * 10 - 5;
   const offsetX = Math.random() * 8 - 4;
   const offsetY = Math.random() * 6 - 3;
@@ -21,6 +21,7 @@ function Card({ id, text, image }) {
         backgroundImage: `url(${image})`,
         zIndex: id,
       }}
+      onClick={onClick}
     >
       <span className="text-black text-[13px] p-3 leading-tight">
         {formattedText}
