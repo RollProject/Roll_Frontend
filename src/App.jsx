@@ -14,7 +14,7 @@ function App() {
       <Route path={routes.auth} element={<AuthPage />} />
       <Route path="*" element={<ErrorPage />} />
       <Route path={routes.edit} element={<EditPage />} />
-      <Route path="board" element={<BoardPage />} />
+      <Route path="/board/:boardId" element={<BoardPage />} />
     </Routes>
   );
 }

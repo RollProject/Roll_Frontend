@@ -4,10 +4,13 @@ import noCardImage from "@/assets/no-card-image.svg";
 import CardList from "@/components/commons/card/CardList";
 import MemoModal from "@/components/commons/modal/MemoModal";
 import { getBoard } from "@/api/board/getBoard";
+import { useParams } from "react-router-dom";
 
 function BoardPage() {
   const [pageTitle, setPageTitle] = useState("로딩 중...");
   const [cardsData, setCardsData] = useState([]);
+  const { boardId } = useParams();
+  console.log(boardId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
     title: "",
@@ -19,7 +22,7 @@ function BoardPage() {
 
   useEffect(() => {
     async function fetchBoard() {
-      const result = await getBoard(1000021);
+      const result = await getBoard(boardId);
 
       if (result && result.board && Array.isArray(result.papers)) {
         console.log("🎯 프론트에서 받은 board:", result.board);
