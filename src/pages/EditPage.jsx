@@ -45,7 +45,7 @@ function BoardCreatePage() {
       <div className="max-w-xl mx-auto p-4 pt-20 space-y-8">
         {/* To. 입력 영역 */}
         <section>
-          <h2 className="text-base font-bold mb-3">To.</h2>
+          <h2 className="text-base mb-3">To.</h2>
           <TextInput
             placeholder="받는 사람의 이름 또는 제목을 입력해주세요"
             value={title}
@@ -55,9 +55,7 @@ function BoardCreatePage() {
 
         {/* 배경 선택 영역 */}
         <section>
-          <h2 className="text-base font-bold mb-3">
-            배경 화면을 선택해주세요.
-          </h2>
+          <h2 className="text-base mb-3">배경 화면을 선택해주세요.</h2>
           <div className="grid grid-cols-4 gap-2 justify-start">
             {renderColorBoxes}
           </div>
@@ -65,7 +63,7 @@ function BoardCreatePage() {
 
         {/* 커스텀 테마 적용하기 영역 */}
         <section>
-          <h2 className="text-base font-bold mb-3">커스텀 테마 적용하기</h2>
+          <h2 className="text-base mb-3">커스텀 테마 적용하기</h2>
           <div className="space-y-2">
             {DUMMY_THEMES.map((theme) => (
               <ThemeSelector
