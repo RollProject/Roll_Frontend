@@ -1,31 +1,42 @@
 import React from "react";
 
-function Card({ id, text, image, onClick }) {
+function Card({ id, nickname, profileUrl, contents, font, bgImage }) {
   const rotation = Math.random() * 10 - 5;
   const offsetX = Math.random() * 8 - 4;
   const offsetY = Math.random() * 6 - 3;
-
-  const formattedText = text.split(/ {2,}/).map((part, index) => (
-    <React.Fragment key={index}>
-      {part}
-      {index < text.split(/ {2,}/).length - 1 && <br />}
-    </React.Fragment>
-  ));
+  console.log("🧾 카드 내용:", contents);
 
   return (
     <div
       key={id}
-      className="w-[135px] h-[145px] bg-cover bg-center flex   "
+      className={"w-[140px] h-[150px] bg-cover bg-center flex flex-col justify-between items-start p-3"}
       style={{
         transform: `rotate(${rotation}deg) translate(${offsetX}px, ${offsetY}px)`,
-        backgroundImage: `url(${image})`,
-        zIndex: id,
+        backgroundImage: `url(${bgImage})`,
+        fontFamily: font,
       }}
-      onClick={onClick}
     >
-      <span className="text-black text-[13px] p-3 leading-tight">
-        {formattedText}
-      </span>
+      <div className="flex items-center gap-2">
+        {profileUrl && (
+          <img
+            src={profileUrl}
+            alt="작성자"
+            className="w-6 h-6 rounded-full"
+          />
+        )}
+        <span className="text-[13px] text-gray-800 truncate">
+          {nickname}
+        </span>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center w-full text-center">
+        <span
+          className="text-[13px] text-gray-800 leading-snug select-none whitespace-pre-wrap"
+          style={{ fontFamily: font }}
+        >
+          {contents}
+        </span>
+      </div>
     </div>
   );
 }

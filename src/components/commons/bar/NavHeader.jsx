@@ -16,7 +16,7 @@ function NavHeader({ title, onBackClick }) {
         onClick={handleBack}
         className="w-[25px] h-[25px] object-contain cursor-pointer"
       />
-      <h1 className="flex-1 text-center text-lg font-bold truncate px-4">
+      <h1 className="flex-1 text-center text-lg truncate px-4">
         {title}
       </h1>
 
