@@ -6,6 +6,7 @@ import Header from "@/components/commons/bar/Header";
 import SectionHeader from "@/components/commons/bar/SectionHeader";
 import MoreButton from "@/components/commons/buttons/MoreButton";
 import Chip from "@/components/commons/buttons/Chip";
+import CardList from "@/components/commons/card/CardList";
 import PopularCardList from "@/components/commons/card/PopularCardList";
 import noCardImage from "@/assets/no-card-image.svg";
 
@@ -17,6 +18,7 @@ import memo5 from "@/assets/memo5.svg";
 import memo6 from "@/assets/memo6.svg";
 
 import { getPopularList } from "@/api/popular/getPopularList";
+import { getMyPapers } from "@/api/paper/getMyPapers";
 
 const FIXED_COUNT = 12;
 const memoImages = [memo1, memo2, memo3, memo4, memo5, memo6];
@@ -25,6 +27,16 @@ function LandingPage() {
   const navigate = useNavigate();
   const { user, setUser } = useUserStore();
   const [popularCards, setPopularCards] = useState([]);
+  const [myPapers, setMyPapers] = useState([]);
+
+  useEffect(() => {
+    async function fetchMyPapers() {
+      const papers = await getMyPapers();
+      console.log("📦 내 페이퍼 목록:", papers);
+      setMyPapers(papers); // ✅ state 업데이트
+    }
+    fetchMyPapers();
+  }, []);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -129,13 +141,29 @@ function LandingPage() {
             <Chip label="페이퍼 만들기" onClick={() => navigate("/edit")} />
           </SectionHeader>
 
-          <div className="flex justify-center items-center w-full h-full">
-            <img
-              src={noCardImage}
-              alt="빈 롤링페이퍼 이미지"
-              className="w-[193px] h-[193px] opacity-80"
-            />
-          </div>
+          {myPapers.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4">
+              {myPapers.map((paper) => (
+                <div
+                  key={paper.RB_id}
+                  className="rounded-2xl shadow-md p-4 text-center bg-white"
+                >
+                  <p className="font-bold text-gray-800">{paper.RB_title}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(paper.RB_datetime).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex justify-center items-center w-full h-full">
+              <img
+                src={noCardImage}
+                alt="빈 롤링페이퍼 이미지"
+                className="w-[193px] h-[193px] opacity-80"
+              />
+            </div>
+          )}
         </div>
       </section>
     </div>
