@@ -18,8 +18,6 @@ function BoardPage() {
     profileUrl: "",
   });
 
-  const myRollingPapers = [];
-
   useEffect(() => {
     async function fetchBoard() {
       const result = await getBoard(boardId);
@@ -29,7 +27,6 @@ function BoardPage() {
         console.log("🧾 연결된 papers:", result.papers);
 
         setPageTitle(result.board.RB_title);
-
         const mappedCards = result.papers.map((paper) => ({
           id: paper.RP_id,
           title: paper.RU_nickname,
@@ -60,32 +57,23 @@ function BoardPage() {
   };
 
   return (
-    <div>
+    <div className={`${pageBgColor} min-h-screen`}>
       <Header title={pageTitle} leftContent="back" rightContent="아이콘" />
       <div>
-        <CardList cards={cardsData} onCardClick={handleCardClick} />
+        {cardsData.length > 0 ? (
+          // 1. 메모지가 1개 이상 있으면 CardList 표시
+          <CardList cards={cardsData} onCardClick={handleCardClick} />
+        ) : (
+          // 2. 메모지가 없으면 (0개면) "빈 이미지" 표시
+          <div className="flex justify-center items-center w-full h-full py-8 pt-20">
+            <img
+              src={noCardImage}
+              alt="빈 롤링페이퍼 이미지"
+              className="w-[193px] h-[193px] opacity-80"
+            />
+          </div>
+        )}
       </div>
-      <section className="flex flex-col gap-[70px] px-[25px] py-[25px]">
-        <div className="flex flex-col gap-[30px]"></div>
-
-        <div className="flex flex-col gap-[30px]">
-          {myRollingPapers.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-100 rounded-lg h-[120px] flex items-center justify-center">
-                내용
-              </div>
-            </div>
-          ) : (
-            <div className="flex justify-center items-center w-full h-full py-8">
-              <img
-                src={noCardImage}
-                alt="빈 롤링페이퍼 이미지"
-                className="w-[193px] h-[193px] opacity-80"
-              />
-            </div>
-          )}
-        </div>
-      </section>
 
       <MemoModal
         title={modalContent.title}

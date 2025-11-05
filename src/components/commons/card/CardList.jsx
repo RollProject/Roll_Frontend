@@ -12,7 +12,7 @@ function CardList({ cards, onCardClick }) {
   const memoBackgrounds = [memo1, memo2, memo3, memo4, memo5, memo6];
 
   return (
-    <div className="flex flex-wrap justify-center w-full mt-1">
+    <div className="flex flex-wrap w-full mt-1">
       {cards.map((card, i) => {
         const memoBg = memoBackgrounds[i % memoBackgrounds.length];
 
@@ -23,8 +23,8 @@ function CardList({ cards, onCardClick }) {
           >
             <Card
               id={card.id}
-              nickname={card.title} 
-              contents={card.text} 
+              nickname={card.title}
+              contents={card.text}
               bgColor={card.bgColor}
               profileUrl={card.profileUrl}
               bgImage={memoBg}

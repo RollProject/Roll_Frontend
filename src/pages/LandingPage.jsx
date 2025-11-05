@@ -146,7 +146,7 @@ function LandingPage() {
               {myPapers.map((paper) => (
                 <div
                   key={paper.RB_id}
-                  className="rounded-2xl shadow-md p-4 text-center bg-white"
+                  className={`rounded-2xl shadow-md p-4 text-center ${paper.RB_bgcolor}`}
                 >
                   <p className="font-bold text-gray-800">{paper.RB_title}</p>
                   <p className="text-sm text-gray-500">
