@@ -37,6 +37,14 @@ function LandingPage() {
     }
     fetchMyPapers();
   }, []);
+
+  const handleClick = (paper) => {
+    const id = paper.RB_id;
+
+    if (typeof id === "number") {
+      navigate(`/board/${id}`);
+    }
+  };
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -142,10 +150,11 @@ function LandingPage() {
           </SectionHeader>
 
           {myPapers.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-x-12 gap-y-4">
               {myPapers.map((paper) => (
                 <div
                   key={paper.RB_id}
+                  onClick={() => handleClick(paper)}
                   className={`rounded-2xl shadow-md p-4 text-center ${paper.RB_bgcolor}`}
                 >
                   <p className="font-bold text-gray-800">{paper.RB_title}</p>
