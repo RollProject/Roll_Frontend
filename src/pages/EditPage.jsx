@@ -1,23 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/commons/bar/EditHeader";
 import TextInput from "@/components/commons/Inputs/TextInput";
 import ColorBox from "@/components/commons/buttons/ColorBox.jsx";
 import ThemeSelector from "@/components/commons/buttons/ThemeSelector";
-
+import { useUserStore } from "@/stores/userStore";
+import { createBoard } from "@/api/board/createBoard";
 import { DUMMY_COLORS } from "@/mock/colors";
 import { DUMMY_THEMES } from "@/mock/themes";
 
 function BoardCreatePage() {
   const navigate = useNavigate();
-
+  const { setUser } = useUserStore();
   const [selectedThemeId, setSelectedThemeId] = useState("null");
   const [selectedColor, setSelectedColor] = useState("bg-blue-200");
   const [title, setTitle] = useState("");
+  const { user } = useUserStore();
+  const [isCreating, setIsCreating] = useState(false);
 
-  const handleComplete = () => {
-    console.log("보드 생성 로직 실행 (백엔드 전송)");
-    navigate("/");
+  const handleComplete = async () => {
+    if (title.trim().length === 0) {
+      alert("⚠️ 롤링페이퍼 제목을 입력해주세요.");
+      return;
+    }
+    if (!user || !user.id) {
+      alert("⚠️ 로그인 정보(RU_id)를 찾을 수 없습니다. 다시 로그인해주세요.");
+      return;
+    }
+    setIsCreating(true);
+
+    const boardData = {
+      title: title,
+      bgcolor: selectedColor,
+      RU_id: user.id,
+    };
+    try {
+      const response = await createBoard(boardData);
+
+      if (response && response.success && response.boardId) {
+        alert("✅ 보드가 성공적으로 생성되었습니다!");
+
+        navigate(`/board/${response.boardId}`);
+      } else {
+        alert(response.message || "❌ 보드 생성에 실패했습니다.");
+      }
+    } catch (error) {
+      alert(`❌ 오류 발생: ${error.message}`);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleThemeClick = (themeId) => {
@@ -37,6 +68,32 @@ function BoardCreatePage() {
       onClick={() => setSelectedColor(color)}
     />
   ));
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/session/session-info", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("세션 정보 요청 실패");
+        const data = await res.json();
+
+        console.log("🟢 세션 응답 전체:", data);
+        console.log("👤 사용자 정보:", data.sessionData?.kakaoUser);
+
+        if (data.sessionData?.kakaoUser) {
+          setUser(data.sessionData.kakaoUser);
+        } else {
+          navigate("/auth");
+        }
+      } catch (err) {
+        console.error("세션 확인 실패:", err);
+        navigate("/auth");
+      }
+    };
+
+    checkSession();
+  }, [setUser, navigate]);
 
   return (
     <div className="relative min-h-screen bg-gray-50 pb-10">
@@ -76,6 +133,11 @@ function BoardCreatePage() {
             ))}
           </div>
         </section>
+        {isCreating && (
+          <div className="text-center text-blue-600 font-bold mt-4">
+            보드 생성 중입니다...
+          </div>
+        )}
       </div>
     </div>
   );
