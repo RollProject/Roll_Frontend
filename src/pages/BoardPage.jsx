@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 function BoardPage() {
   const [pageTitle, setPageTitle] = useState("로딩 중...");
   const [cardsData, setCardsData] = useState([]);
+  const [pageBgColor, setPageBgColor] = useState("bg-gray-100");
   const { boardId } = useParams();
   console.log(boardId);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,6 +28,7 @@ function BoardPage() {
         console.log("🧾 연결된 papers:", result.papers);
 
         setPageTitle(result.board.RB_title);
+        setPageBgColor(result.board.RB_bgcolor);
         const mappedCards = result.papers.map((paper) => ({
           id: paper.RP_id,
           title: paper.RU_nickname,
