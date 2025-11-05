@@ -16,18 +16,56 @@ import memo3 from "@/assets/memo3.svg";
 import memo4 from "@/assets/memo4.svg";
 import memo5 from "@/assets/memo5.svg";
 import memo6 from "@/assets/memo6.svg";
-
+import FloatingMenu from "@/components/commons/buttons/FloatingButton";
+import PageModal from "@/components/commons/modal/PageModal";
+import WriteButton from "@/components/commons/buttons/WriteButton";
 import { getPopularList } from "@/api/popular/getPopularList";
 import { getMyPapers } from "@/api/paper/getMyPapers";
 
 const FIXED_COUNT = 12;
 const memoImages = [memo1, memo2, memo3, memo4, memo5, memo6];
-
+const MENU_OPTIONS = [
+  { label: "페이퍼 만들기", action: "create" },
+  { label: "페이지 공유하기", action: "share" },
+];
 function LandingPage() {
   const navigate = useNavigate();
   const { user, setUser } = useUserStore();
   const [popularCards, setPopularCards] = useState([]);
   const [myPapers, setMyPapers] = useState([]);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleWriteButtonClick = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleMenuSelect = (action) => {
+    setIsMenuOpen(false);
+
+    if (action === "create") {
+      setIsModalOpen(true);
+    } else if (action === "share") {
+      alert("페이지 공유 기능 구현 예정");
+    }
+  };
+
+  const handleModalComplete = () => {
+    alert("롤링페이퍼 보드 생성 완료");
+    setIsModalOpen(false);
+  };
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else if (!isModalOpen) {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMenuOpen, isModalOpen]);
 
   useEffect(() => {
     async function fetchMyPapers() {
@@ -173,6 +211,30 @@ function LandingPage() {
               />
             </div>
           )}
+          {isMenuOpen && (
+            <>
+              <div
+                className="fixed inset-0 bg-black opacity-40 z-40"
+                onClick={() => setIsMenuOpen(false)}
+              />
+
+              <FloatingMenu
+                options={MENU_OPTIONS}
+                onSelect={handleMenuSelect}
+                className="z-51"
+              />
+            </>
+          )}
+
+          {!isMenuOpen && !isModalOpen && (
+            <WriteButton onClick={handleWriteButtonClick} />
+          )}
+          <PageModal
+            isOpen={isModalOpen}
+            title="롤링페이퍼 작성하기"
+            onClose={() => setIsModalOpen(false)}
+            onComplete={handleModalComplete}
+          />
         </div>
       </section>
     </div>

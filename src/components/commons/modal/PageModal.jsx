@@ -1,62 +1,85 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+import TextArea from "@/components/commons/Inputs/TextArea";
+import Dropdown from "@/components/commons/Inputs/Dropdown";
+import ColorBox from "@/components/commons/buttons/ColorBox";
+import { FONT_OPTIONS } from "@/utils/constants/fontOptions.js";
 /**
- * 페이지 상단에서 내려오는 모달/팝업 시트 형태의 공통 컴포넌트입니다.
- * (롤링페이퍼 생성, 설정 변경 등 주요 작업에 사용)
- *
- * @param {object} props - 컴포넌트 props
- * @param {boolean} props.isOpen - 모달 표시/숨김 여부 (필수)
- * @param {string} props.title - 모달 헤더 중앙에 표시될 제목 (필수)
- * @param {function} props.onClose - 모달 닫기 버튼 클릭 시 실행될 핸들러
- * @param {function} props.onComplete - 모달 내 '완료' 버튼 클릭 시 실행될 핸들러
- * @param {React.ReactNode} props.children - 모달 본문에 들어갈 내용 (배경 선택, 입력 폼 등)
+ * 페이퍼 작성/수정 모달 컴포넌트
+ * @param {boolean} isOpen - 모달 열림 상태
+ * @param {string} title - 모달 제목
+ * @param {function} onClose - 닫기 버튼 클릭 시 호출
+ * @param {function} onComplete - 완료 버튼 클릭 시 호출. (data) => {} 형태
  */
 
-function PageModal({ isOpen, onClose, onComplete, children }) {
+function PageModal({ isOpen, onClose, onComplete, title }) {
+  const [content, setContent] = useState("");
+  const [font, setFont] = useState(FONT_OPTIONS[0].value);
+
+  useEffect(() => {
+    if (isOpen) {
+      setContent("");
+      setFont(FONT_OPTIONS[0].value);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  // 오른쪽 '완료' 버튼
-  const CompleteButton = () => (
-    <button
-      onClick={onComplete}
-      className="text-base font-bold text-black px-2 py-1"
-    >
-      완료
-    </button>
-  );
-
-  //왼쪽 '닫기' 버튼
-  const CloseButton = () => (
-    <button
-      onClick={onClose}
-      className="text-base font-medium text-gray-700 px-2 py-1"
-    >
-      닫기
-    </button>
-  );
+  const handleCompleteClick = () => {
+    if (content.trim().length === 0) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
+    onComplete({
+      content,
+      font,
+    });
+  };
 
   return (
-    <div className="fixed inset-0 z-50">
-      {/* 1. 딤머 배경 */}
-      <div
-        className="fixed inset-0 z-40"
-        onClick={onClose}
-        style={{ backgroundColor: "rgba(96, 95, 95, 0.7)" }} // #605F5F
-      />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
 
-      {/* 2. 모달 내용 컨테이너 */}
-      <div className="fixed top-[88px] left-0 right-0 w-full max-w-xl mx-auto bottom-0 bg-white shadow-2xl z-50 overflow-y-auto rounded-t-3xl">
-        {/* 모달 내부 헤더  */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-          {/* 닫기 버튼 */}
-          <CloseButton />
-          {/* 중앙 제목 */}
-          <h2 className="text-lg font-bold truncate">롤링페이퍼 보드 생성</h2>
-          {/* 완료 버튼 */}
-          <CompleteButton />
+      <div className="relative z-50 w-full max-w-md bg-white rounded-lg shadow-lg">
+        <div className="flex items-center justify-between p-4 border-b">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            &times;
+          </button>
+          <h3 className="text-lg ">{title}</h3>
+          <button
+            onClick={handleCompleteClick}
+            className=" text-blue-600 hover:text-blue-800"
+          >
+            완료
+          </button>
         </div>
 
-        {/* 3. 모달 본문 (children) */}
-        <div className="p-4 pb-20">{children}</div>
+        <div className="p-4 space-y-6">
+          {" "}
+          <div className="space-y-2">
+            <p className="text-sm ">내용을 적어주세요.</p>
+            <TextArea
+              placeholder="따뜻한 메시지를 남겨주세요..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              fontStyle={font}
+            />
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm ">폰트를 선택해주세요</p>
+            <Dropdown
+              options={FONT_OPTIONS.map((f) => ({
+                value: f.value,
+                label: f.label,
+              }))}
+              value={font}
+              onChange={(e) => setFont(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
