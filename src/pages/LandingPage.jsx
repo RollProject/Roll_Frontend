@@ -20,7 +20,7 @@ import FloatingMenu from "@/components/commons/buttons/FloatingButton";
 import PageModal from "@/components/commons/modal/PageModal";
 import WriteButton from "@/components/commons/buttons/WriteButton";
 import { getPopularList } from "@/api/popular/getPopularList";
-import { getMyPapers } from "@/api/paper/getMyPapers";
+import { getMyPapers } from "@/api/board/getMyBoard";
 
 const FIXED_COUNT = 12;
 const memoImages = [memo1, memo2, memo3, memo4, memo5, memo6];
@@ -184,7 +184,7 @@ function LandingPage() {
 
         <div className="flex flex-col gap-[30px]">
           <SectionHeader title="내 롤링페이퍼">
-            <Chip label="페이퍼 만들기" onClick={() => navigate("/edit")} />
+            <Chip label="보드 만들기" onClick={() => navigate("/edit")} />
           </SectionHeader>
 
           {myPapers.length > 0 ? (
