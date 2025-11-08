@@ -1,25 +1,23 @@
 import React from "react";
-import logo from "@/assets/logo.png";
-import hamberger from "@/assets/hamberger.jpg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
+import logo from "@/assets/logo.png"; 
 
 function Header() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
+
+  const handleLogoClick = () => {
+    navigate("/"); 
+  };
+
   return (
-    <header className="sticky top-0 left-0 w-full flex justify-between items-center px-[15px] py-5 bg-white/40 backdrop-blur-md z-50">
+    <header className="sticky top-0 left-0 w-full flex justify-between items-center px-[15px] py-5 bg-black backdrop-blur-md z-50">
       <img
         src={logo}
-        alt="logo"
-        onClick={() => navigate("/")}
-        className="w-[60px] object-contain cursor-pointer"
+        alt="ROLL 로고"
+        className="h-[25px] w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity"
+        onClick={handleLogoClick} 
       />
-
-      <img
-        src={hamberger}
-        alt="menu"
-        className="w-[20px] h-[20px] cursor-pointer"
-        onClick={() => console.log("햄버거 클릭")}
-      />
+      <p className=""></p>
     </header>
   );
 }
