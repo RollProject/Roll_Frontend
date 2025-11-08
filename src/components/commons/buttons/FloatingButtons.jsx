@@ -1,21 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiEdit3 } from "react-icons/fi";
 import { LuSparkles } from "react-icons/lu";
 
 import WriteModal from "./WriteModal";
 import DecorateModal from "./DecorateModal";
 
-function FloatingButtons({ mode }) {
+function FloatingButtons({ mode, onWriteComplete }) {
   const [isWriteOpen, setIsWriteOpen] = useState(false);
   const [isDecorateOpen, setIsDecorateOpen] = useState(false);
 
   const handleWriteClick = () => setIsWriteOpen(true);
   const handleDecorateClick = () => setIsDecorateOpen(true);
 
+  const handleWriteComplete = (data) => {
+    if (onWriteComplete) {
+      onWriteComplete(data);
+    }
+    setIsWriteOpen(false);
+  };
+
+  useEffect(() => {
+    if (isWriteOpen || isDecorateOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isWriteOpen, isDecorateOpen]);
+
+  if (isWriteOpen) {
+    return (
+      <>
+        <WriteModal
+          onClose={() => setIsWriteOpen(false)}
+          onComplete={handleWriteComplete}
+        />
+        {isDecorateOpen && (
+          <DecorateModal onClose={() => setIsDecorateOpen(false)} />
+        )}
+      </>
+    );
+  }
   return (
     <>
-      {isWriteOpen && <WriteModal onClose={() => setIsWriteOpen(false)} />}
-
       {isDecorateOpen && (
         <DecorateModal onClose={() => setIsDecorateOpen(false)} />
       )}
