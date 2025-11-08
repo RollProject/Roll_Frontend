@@ -1,17 +1,11 @@
 import React from "react";
-import PopularCard from "@/components/commons/card//PopularCard";
+import PopularCard from "@/components/commons/card/PopularCard";
 
-function PopularCardList({ cards }) {
+function PopularCardList({ cards = [] }) {
   return (
-    <div className="flex flex-wrap justify-center w-full mt-1">
-      {cards.map((card, i) => (
-        <div
-          key={card.id}
-          className={`relative ${i % 3 !== 0 ? "-ml-2" : "ml-0"}
-          }`}
-        >
-          <PopularCard {...card} />
-        </div>
+    <div className="flex flex-wrap justify-center gap-3 w-full mt-4">
+      {cards.map((card) => (
+        <PopularCard key={card.id} {...card} />
       ))}
     </div>
   );

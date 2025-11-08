@@ -96,23 +96,24 @@ function BoardCreatePage() {
   }, [setUser, navigate]);
 
   return (
-    <div className="relative min-h-screen bg-gray-50 pb-10">
+    <div className="relative min-h-screen bg-[#1e1e1e] pb-10">
       <Header title="롤링페이퍼 보드 생성" onComplete={handleComplete} />
 
       <div className="max-w-xl mx-auto p-4 pt-20 space-y-8">
         {/* To. 입력 영역 */}
         <section>
-          <h2 className="text-base mb-3">To.</h2>
+          <h2 className="text-base mb-3 text-white">To.</h2>
           <TextInput
             placeholder="받는 사람의 이름 또는 제목을 입력해주세요"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="w-full bg-[#1e1e1e] border-b border-gray-600 focus:border-white focus:outline-none transition duration-300"
           />
         </section>
 
         {/* 배경 선택 영역 */}
         <section>
-          <h2 className="text-base mb-3">배경 화면을 선택해주세요.</h2>
+          <h2 className="text-base mb-3 text-white">배경 화면을 선택해주세요.</h2>
           <div className="grid grid-cols-4 gap-2 justify-start">
             {renderColorBoxes}
           </div>
@@ -120,7 +121,7 @@ function BoardCreatePage() {
 
         {/* 커스텀 테마 적용하기 영역 */}
         <section>
-          <h2 className="text-base mb-3">커스텀 테마 적용하기</h2>
+          <h2 className="text-base mb-3 text-white">커스텀 테마 적용하기</h2>
           <div className="space-y-2">
             {DUMMY_THEMES.map((theme) => (
               <ThemeSelector
