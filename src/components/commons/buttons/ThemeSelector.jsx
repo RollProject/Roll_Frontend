@@ -18,7 +18,7 @@ function ThemeSelector({
 }) {
   // 공통 기본 스타일: 둥근 모서리, 패딩, 부드러운 전환 효과, 투명도
   const baseStyle =
-    "flex items-center p-3 gap-4 rounded-[12px] cursor-pointer transition-all duration-200";
+    "flex items-center p-3 bg-gray-200 gap-4 rounded-[12px] cursor-pointer transition-all duration-200";
 
   const selectedStyle = isSelected
     ? "border-[2px] border-black bg-white shadow-lg opacity-100" //선택되면 진하게
