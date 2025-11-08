@@ -72,12 +72,10 @@ function WriteModal({ onClose, onComplete }) {
           >
             닫기
           </button>
-          <h2 className="text-lg font-bold text-white">
-            롤링페이퍼 메세지 작성
-          </h2>
+          <h2 className="text-lg  text-white">롤링페이퍼 메세지 작성</h2>
           <button
             onClick={handleCompleteClick}
-            className="text-blue-400 font-bold hover:text-blue-300 text-sm"
+            className="text-blue-400  hover:text-blue-300 text-sm"
           >
             등록
           </button>
@@ -85,9 +83,7 @@ function WriteModal({ onClose, onComplete }) {
 
         {/* 내용 입력 영역 */}
         <div className="px-6 py-4 overflow-y-auto max-h-[70vh]">
-          <p className="text-sm font-bold mb-2 text-white">
-            내용을 적어주세요.
-          </p>
+          <p className="text-sm  mb-2 text-white">내용을 적어주세요.</p>
           <TextArea
             placeholder="따뜻한 메시지를 남겨주세요..."
             value={content}
@@ -102,7 +98,7 @@ function WriteModal({ onClose, onComplete }) {
           <div className="flex justify-between items-center text-sm mt-4">
             <div className="flex items-center">
               <span className="mr-2 text-gray-400">from</span>
-              <span className="font-bold text-blue-400">@현재로그인유저</span>
+              <span className=" text-blue-400">@현재로그인유저</span>
             </div>
           </div>
         </div>

@@ -25,7 +25,7 @@ function TextColorSelectModal({
         className="bg-gray-800 text-white w-full max-w-sm rounded-lg p-5 shadow-2xl relative"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-xl font-bold mb-4">글자색 전체 목록</h3>
+        <h3 className="text-xl  mb-4">글자색 전체 목록</h3>
         <div className="grid grid-cols-4 gap-3">
           {TEXT_COLOR_OPTIONS.map((c) => (
             <div key={c.class} className="flex flex-col items-center">
