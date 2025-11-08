@@ -3,7 +3,6 @@ import Header from "@/components/commons/bar/NavHeader";
 import noCardImage from "@/assets/no-card-image.svg";
 import CardList from "@/components/commons/card/CardList";
 import MemoModal from "@/components/commons/modal/MemoModal";
-import PageModal from "@/components/commons/modal/PageModal";
 import FloatingButtons from "@/components/commons/buttons/FloatingButtons"; // ✅ 새로 만든 플로팅 버튼 import
 
 import { getBoard } from "@/api/board/getBoard";
@@ -22,45 +21,37 @@ function BoardPage() {
   });
 
   const [isMemoModalOpen, setIsMemoModalOpen] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isDecorateModalOpen, setIsDecorateModalOpen] = useState(false); // ✨ 꾸미기 모달용
 
-  // --- 작성 완료 시 콜백
-  const handleModalComplete = async (data) => {
-    console.log("모달에서 받은 데이터:", data);
-    alert("페이퍼 작성 API 연동 필요");
-    setIsCreateModalOpen(false);
+  const fetchBoard = async () => {
+    const result = await getBoard(boardId);
+
+    if (result && result.board && Array.isArray(result.papers)) {
+      setPageTitle(result.board.RB_title);
+      setPageBgColor(result.board.RB_bgcolor);
+      const mappedCards = result.papers.map((paper) => ({
+        id: paper.RP_id,
+        title: paper.RU_nickname,
+        text: paper.RP_contents,
+        image: paper.RU_profile_url,
+        bgColor: paper.RP_bgcolor,
+        font: paper.RP_font,
+        profileUrl: paper.RU_profile_url,
+      }));
+      setCardsData(mappedCards);
+    } else {
+      console.warn("API에서 보드나 페이퍼 데이터를 받지 못했습니다.", result);
+      setPageTitle("보드를 찾을 수 없습니다.");
+    }
   };
 
-  // --- 데이터 불러오기
+  const handleWriteComplete = async (data) => {
+    console.log("✅ WriteModal 최종 데이터 수신:", data);
+    alert(
+      `작성 완료: 내용=${data.content.substring(0, 10)}... | 색=${data.color}`
+    );
+  };
+
   useEffect(() => {
-    async function fetchBoard() {
-      const result = await getBoard(boardId);
-
-      if (result && result.board && Array.isArray(result.papers)) {
-        console.log("🎯 프론트에서 받은 board:", result.board);
-        console.log("🧾 연결된 papers:", result.papers);
-
-        setPageTitle(result.board.RB_title);
-        setPageBgColor(result.board.RB_bgcolor);
-
-        const mappedCards = result.papers.map((paper) => ({
-          id: paper.RP_id,
-          title: paper.RU_nickname,
-          text: paper.RP_contents,
-          image: paper.RU_profile_url,
-          bgColor: paper.RP_bgcolor,
-          font: paper.RP_font,
-          profileUrl: paper.RU_profile_url,
-        }));
-
-        setCardsData(mappedCards);
-      } else {
-        console.warn("API에서 보드나 페이퍼 데이터를 받지 못했습니다.", result);
-        setPageTitle("보드를 찾을 수 없습니다.");
-      }
-    }
-
     fetchBoard();
   }, [boardId]);
 
@@ -73,10 +64,6 @@ function BoardPage() {
     });
     setIsMemoModalOpen(true);
   };
-
-  // --- 플로팅 버튼 클릭 핸들러
-  const handleWriteOpen = () => setIsCreateModalOpen(true);
-  const handleDecorateOpen = () => setIsDecorateModalOpen(true);
 
   return (
     <div className={`${pageBgColor} min-h-screen`}>
@@ -105,36 +92,8 @@ function BoardPage() {
         onClose={() => setIsMemoModalOpen(false)}
       />
 
-      {/* ✏️ 작성하기 모달 */}
-      <PageModal
-        isOpen={isCreateModalOpen}
-        title="롤링페이퍼 작성하기"
-        onClose={() => setIsCreateModalOpen(false)}
-        onComplete={handleModalComplete}
-      />
-
-      {/* ✨ 꾸미기 모달 (기본 placeholder용) */}
-      {isDecorateModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white w-[90%] max-w-md rounded-2xl p-6 shadow-lg">
-            <h2 className="text-lg font-bold mb-3">꾸미기</h2>
-            <p className="text-gray-600 text-sm">
-              스티커 추가 기능은 곧 구현 예정이에요 🎨
-            </p>
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setIsDecorateModalOpen(false)}
-                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
-              >
-                닫기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 🪄 새로운 플로팅 버튼 */}
-      <FloatingButtons mode={2} />
+      {/* 🪄 플로팅 버튼 (WriteModal 포함) */}
+      <FloatingButtons mode={2} onWriteComplete={handleWriteComplete} />
     </div>
   );
 }
