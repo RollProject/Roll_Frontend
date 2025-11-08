@@ -16,7 +16,7 @@ import memo3 from "@/assets/memo3.svg";
 import memo4 from "@/assets/memo4.svg";
 import memo5 from "@/assets/memo5.svg";
 import memo6 from "@/assets/memo6.svg";
-import FloatingMenu from "@/components/commons/buttons/FloatingButton";
+import FloatingMenu from "@/components/commons/buttons/FloatingButtons";
 import PageModal from "@/components/commons/modal/PageModal";
 import WriteButton from "@/components/commons/buttons/WriteButton";
 import { getPopularList } from "@/api/popular/getPopularList";

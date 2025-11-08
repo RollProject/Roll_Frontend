@@ -3,55 +3,36 @@ import Header from "@/components/commons/bar/NavHeader";
 import noCardImage from "@/assets/no-card-image.svg";
 import CardList from "@/components/commons/card/CardList";
 import MemoModal from "@/components/commons/modal/MemoModal";
-import FloatingMenu from "@/components/commons/buttons/FloatingButton";
 import PageModal from "@/components/commons/modal/PageModal";
-import WriteButton from "@/components/commons/buttons/WriteButton";
+import FloatingButtons from "@/components/commons/buttons/FloatingButtons"; // ✅ 새로 만든 플로팅 버튼 import
 
 import { getBoard } from "@/api/board/getBoard";
 import { useParams } from "react-router-dom";
 
-const MENU_OPTIONS = [
-  { label: "메세지 작성하기", action: "create" },
-  { label: "페이지 공유하기", action: "share" },
-];
 function BoardPage() {
   const [pageTitle, setPageTitle] = useState("로딩 중...");
   const [cardsData, setCardsData] = useState([]);
   const [pageBgColor, setPageBgColor] = useState("bg-gray-100");
   const { boardId } = useParams();
-  console.log(boardId);
+
   const [modalContent, setModalContent] = useState({
     title: "",
     fullContent: "",
     profileUrl: "",
   });
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const [isMemoModalOpen, setIsMemoModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDecorateModalOpen, setIsDecorateModalOpen] = useState(false); // ✨ 꾸미기 모달용
 
-  const handleWriteButtonClick = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleMenuSelect = (action) => {
-    setIsMenuOpen(false);
-
-    if (action === "create") {
-      setIsCreateModalOpen(true);
-    } else if (action === "share") {
-      alert("페이지 공유 기능 구현 예정");
-    }
-  };
-
+  // --- 작성 완료 시 콜백
   const handleModalComplete = async (data) => {
     console.log("모달에서 받은 데이터:", data);
-
-    // --- 향후 API 연동 시
-
     alert("페이퍼 작성 API 연동 필요");
     setIsCreateModalOpen(false);
   };
 
+  // --- 데이터 불러오기
   useEffect(() => {
     async function fetchBoard() {
       const result = await getBoard(boardId);
@@ -62,6 +43,7 @@ function BoardPage() {
 
         setPageTitle(result.board.RB_title);
         setPageBgColor(result.board.RB_bgcolor);
+
         const mappedCards = result.papers.map((paper) => ({
           id: paper.RP_id,
           title: paper.RU_nickname,
@@ -82,6 +64,7 @@ function BoardPage() {
     fetchBoard();
   }, [boardId]);
 
+  // --- 카드 클릭 시 메모 모달 오픈
   const handleCardClick = (cardData) => {
     setModalContent({
       title: cardData.title,
@@ -91,9 +74,14 @@ function BoardPage() {
     setIsMemoModalOpen(true);
   };
 
+  // --- 플로팅 버튼 클릭 핸들러
+  const handleWriteOpen = () => setIsCreateModalOpen(true);
+  const handleDecorateOpen = () => setIsDecorateModalOpen(true);
+
   return (
     <div className={`${pageBgColor} min-h-screen`}>
       <Header title={pageTitle} leftContent="back" rightContent="아이콘" />
+
       <div className="px-[5px]">
         {cardsData.length > 0 ? (
           <CardList cards={cardsData} onCardClick={handleCardClick} />
@@ -108,6 +96,7 @@ function BoardPage() {
         )}
       </div>
 
+      {/* 📝 메모 모달 */}
       <MemoModal
         title={modalContent.title}
         fullContent={modalContent.fullContent}
@@ -116,31 +105,36 @@ function BoardPage() {
         onClose={() => setIsMemoModalOpen(false)}
       />
 
-      {isMenuOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black opacity-40 z-40"
-            onClick={() => setIsMenuOpen(false)}
-          />
-
-          <FloatingMenu
-            options={MENU_OPTIONS}
-            onSelect={handleMenuSelect}
-            className="z-51"
-          />
-        </>
-      )}
-
-      {!isMenuOpen && !isMemoModalOpen && !isCreateModalOpen && (
-        <WriteButton onClick={handleWriteButtonClick} />
-      )}
-
+      {/* ✏️ 작성하기 모달 */}
       <PageModal
         isOpen={isCreateModalOpen}
         title="롤링페이퍼 작성하기"
         onClose={() => setIsCreateModalOpen(false)}
         onComplete={handleModalComplete}
       />
+
+      {/* ✨ 꾸미기 모달 (기본 placeholder용) */}
+      {isDecorateModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white w-[90%] max-w-md rounded-2xl p-6 shadow-lg">
+            <h2 className="text-lg font-bold mb-3">꾸미기</h2>
+            <p className="text-gray-600 text-sm">
+              스티커 추가 기능은 곧 구현 예정이에요 🎨
+            </p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setIsDecorateModalOpen(false)}
+                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🪄 새로운 플로팅 버튼 */}
+      <FloatingButtons mode={2} />
     </div>
   );
 }

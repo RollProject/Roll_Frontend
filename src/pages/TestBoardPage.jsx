@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import WriteButton from "@/components/commons/buttons/WriteButton";
-import FloatingMenu from "@/components/commons/buttons/FloatingButton";
+import FloatingMenu from "@/components/commons/buttons/FloatingButtons";
 import PageModal from "@/components/commons/modal/PageModal";
 import Header from "@/components/commons/bar/Header";
 
