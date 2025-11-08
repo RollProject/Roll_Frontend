@@ -94,7 +94,7 @@ function BoardPage() {
   return (
     <div className={`${pageBgColor} min-h-screen`}>
       <Header title={pageTitle} leftContent="back" rightContent="아이콘" />
-      <div>
+      <div className="px-[5px]">
         {cardsData.length > 0 ? (
           <CardList cards={cardsData} onCardClick={handleCardClick} />
         ) : (
