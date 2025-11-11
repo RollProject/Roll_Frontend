@@ -5,9 +5,8 @@ import ColorSelectModal from "@/components/commons/modal/ColorSelectModal";
 import StyleToolbar from "@/components/commons/bar/StyleToolbar";
 import TextColorSelectModal from "@/components/commons/modal/TextColorSelectModal";
 
-const DEFAULT_BG_COLOR = "bg-yellow-100";
+const DEFAULT_BG_COLOR = "bg-white";
 const DEFAULT_FONT = FONT_OPTIONS[0].value;
-const DUMMY_COLORS = ["bg-yellow-100", "bg-red-100", "bg-blue-100"];
 
 function WriteModal({ onClose, onComplete }) {
   const [content, setContent] = useState("");
