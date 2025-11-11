@@ -6,23 +6,62 @@ import MemoModal from "@/components/commons/modal/MemoModal";
 import FloatingButtons from "@/components/commons/buttons/FloatingButtons"; // ✅ 새로 만든 플로팅 버튼 import
 
 import { getBoard } from "@/api/board/getBoard";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
+import { createPaper } from "@/api/paper/createPaper";
+import { useUserStore } from "@/stores/userStore";
 
 function BoardPage() {
   const [pageTitle, setPageTitle] = useState("로딩 중...");
   const [cardsData, setCardsData] = useState([]);
   const [pageBgColor, setPageBgColor] = useState("bg-gray-100");
   const { boardId } = useParams();
+  const { user, setUser } = useUserStore();
+  const navigate = useNavigate();
 
   const [modalContent, setModalContent] = useState({
     title: "",
     fullContent: "",
     profileUrl: "",
+    font: "font-sans",
   });
 
   const [isMemoModalOpen, setIsMemoModalOpen] = useState(false);
 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/me", {
+          credentials: "include",
+        });
+
+        const data = await res.json();
+        console.log("🧠 /me 응답 (BoardPage):", data);
+
+        if (data.success) {
+          setUser({
+            id: data.data.RU_id ?? data.data.kakao_id,
+            nickname: data.data.nickname,
+            profile_image: data.data.profile_image,
+            kakao_id: data.data.kakao_id,
+            RU_id: data.data.RU_id,
+          });
+        } else {
+          console.warn("세션 만료 (BoardPage):", data.message);
+          navigate("/auth");
+        }
+      } catch (err) {
+        console.error("❌ 세션 확인 중 오류 (BoardPage):", err);
+        navigate("/auth");
+      }
+    };
+
+    fetchUserInfo();
+  }, [setUser, navigate]);
+
   const fetchBoard = async () => {
+    if (!boardId) return;
+
     const result = await getBoard(boardId);
 
     if (result && result.board && Array.isArray(result.papers)) {
@@ -45,26 +84,58 @@ function BoardPage() {
   };
 
   const handleWriteComplete = async (data) => {
-    console.log("✅ WriteModal 최종 데이터 수신:", data);
-    alert(
-      `작성 완료: 내용=${data.content.substring(0, 10)}... | 색=${data.color}`
-    );
+    if (!user?.RU_id) {
+      alert("사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
+      return;
+    }
+    if (!boardId) {
+      alert("보드 ID를 찾을 수 없습니다.");
+      return;
+    }
+
+    try {
+      const paperData = {
+        boardId: boardId,
+        kakao_id: user.kakao_id,
+        content: data.content,
+        font: data.font,
+        color: data.color,
+        align: data.align,
+      };
+
+      const result = await createPaper(paperData);
+
+      if (result.success) {
+        alert("페이퍼가 성공적으로 작성되었습니다!");
+        await fetchBoard();
+      } else {
+        alert(result.message || "페이퍼 작성에 실패했습니다.");
+      }
+    } catch (err) {
+      alert(`오류 발생: ${err.message}`);
+    }
   };
 
   useEffect(() => {
     fetchBoard();
   }, [boardId]);
 
-  // --- 카드 클릭 시 메모 모달 오픈
   const handleCardClick = (cardData) => {
     setModalContent({
       title: cardData.title,
       fullContent: cardData.text,
       profileUrl: cardData.profileUrl,
+      font: cardData.font,
     });
     setIsMemoModalOpen(true);
   };
-
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-screen text-gray-500">
+        세션 확인 중...
+      </div>
+    );
+  }
   return (
     <div className={`${pageBgColor} min-h-screen`}>
       <Header title={pageTitle} leftContent="back" rightContent="아이콘" />
@@ -88,8 +159,10 @@ function BoardPage() {
         title={modalContent.title}
         fullContent={modalContent.fullContent}
         profileUrl={modalContent.profileUrl}
+        font={modalContent.font}
         isOpen={isMemoModalOpen}
         onClose={() => setIsMemoModalOpen(false)}
+        boardTitle={pageTitle}
       />
 
       {/* 🪄 플로팅 버튼 (WriteModal 포함) */}
