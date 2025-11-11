@@ -10,7 +10,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { createPaper } from "@/api/paper/createPaper";
 import { useUserStore } from "@/stores/userStore";
-
+import { deleteBoard } from "@/api/board/deleteBoard";
 function BoardPage() {
   const [pageTitle, setPageTitle] = useState("로딩 중...");
   const [cardsData, setCardsData] = useState([]);
@@ -129,6 +129,26 @@ function BoardPage() {
     });
     setIsMemoModalOpen(true);
   };
+  const handleDeleteBoard = async () => {
+    const isConfirmed = window.confirm(
+      "정말로 이 보드를 삭제하시겠습니까?\n모든 롤링페이퍼가 영구히 삭제됩니다."
+    );
+
+    if (isConfirmed) {
+      try {
+        const result = await deleteBoard(boardId);
+
+        if (result.success) {
+          alert(result.message);
+          navigate("/");
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        alert("삭제 중 오류가 발생했습니다.");
+      }
+    }
+  };
   if (!user) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500">
@@ -138,7 +158,12 @@ function BoardPage() {
   }
   return (
     <div className={`${pageBgColor} min-h-screen`}>
-      <Header title={pageTitle} leftContent="back" rightContent="아이콘" />
+      <Header
+        title={pageTitle}
+        leftContent="back"
+        rightContent="아이콘"
+        onRightClick={handleDeleteBoard}
+      />
 
       <div className="px-[5px]">
         {cardsData.length > 0 ? (

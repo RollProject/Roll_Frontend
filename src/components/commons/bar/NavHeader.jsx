@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import back from "@/assets/LeftArrow.svg";
 import hamberger from "@/assets/hamberger-black.svg";
 
-function NavHeader({ title, onBackClick }) {
+function NavHeader({ title, onBackClick, onRightClick }) {
   const navigate = useNavigate();
-
+  const handleRightClick = onRightClick || (() => console.log("햄버거 클릭"));
   const handleBack = onBackClick || (() => navigate(-1));
   return (
     <header className="sticky top-0 left-0 w-full flex justify-between items-center px-6 py-5 z-50">
@@ -27,7 +27,7 @@ function NavHeader({ title, onBackClick }) {
         src={hamberger}
         alt="menu"
         className="w-[20px] h-[20px] cursor-pointer"
-        onClick={() => console.log("햄버거 클릭")}
+        onClick={handleRightClick}
       />
     </header>
   );
