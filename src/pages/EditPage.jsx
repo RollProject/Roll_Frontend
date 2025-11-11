@@ -13,7 +13,7 @@ function BoardCreatePage() {
   const navigate = useNavigate();
   const { setUser } = useUserStore();
   const [selectedThemeId, setSelectedThemeId] = useState("null");
-  const [selectedColor, setSelectedColor] = useState("bg-blue-200");
+  const [selectedColor, setSelectedColor] = useState("bg-white");
   const [title, setTitle] = useState("");
   const { user } = useUserStore();
   const [isCreating, setIsCreating] = useState(false);
@@ -107,13 +107,15 @@ function BoardCreatePage() {
             placeholder="받는 사람의 이름 또는 제목을 입력해주세요"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-[#1e1e1e] border-b border-gray-600 focus:border-white focus:outline-none transition duration-300"
+            className="w-full bg-[#1e1e1e] border-b border-gray-600  text-white focus:border-white focus:outline-none transition duration-300"
           />
         </section>
 
         {/* 배경 선택 영역 */}
         <section>
-          <h2 className="text-base mb-3 text-white">배경 화면을 선택해주세요.</h2>
+          <h2 className="text-base mb-3 text-white">
+            배경 화면을 선택해주세요.
+          </h2>
           <div className="grid grid-cols-4 gap-2 justify-start">
             {renderColorBoxes}
           </div>
