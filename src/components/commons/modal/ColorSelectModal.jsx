@@ -2,13 +2,13 @@ import React from "react";
 import ColorBox from "@/components/commons/buttons/ColorBox";
 
 const ALL_COLORS = [
+  "bg-white",
   "bg-blue-200",
   "bg-purple-200",
   "bg-pink-200",
   "bg-green-200",
   "bg-lime-200",
   "bg-orange-200",
-  "bg-white",
   "bg-red-200",
   "bg-indigo-200",
   "bg-teal-200",
