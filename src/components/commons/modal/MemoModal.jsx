@@ -1,6 +1,13 @@
 import React from "react";
 
-function MemoModal({ title, fullContent, isOpen, onClose, profileUrl }) {
+function MemoModal({
+  title,
+  fullContent,
+  isOpen,
+  onClose,
+  profileUrl,
+  font = "font-sans",
+}) {
   if (!isOpen) return null;
 
   return (
@@ -26,7 +33,10 @@ function MemoModal({ title, fullContent, isOpen, onClose, profileUrl }) {
         </div>
 
         {/* 3. 전체 내용 표시 */}
-        <p className="whitespace-pre-wrap text-gray-700 max-h-80 overflow-y-auto">
+        <p
+          className={`whitespace-pre-wrap text-gray-700 max-h-80 overflow-y-auto ${font}`}
+          style={{ fontFamily: font.startsWith("font-") ? "" : font }}
+        >
           {fullContent}
         </p>
 
