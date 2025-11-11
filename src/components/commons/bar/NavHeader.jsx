@@ -9,7 +9,7 @@ function NavHeader({ title, onBackClick }) {
 
   const handleBack = onBackClick || (() => navigate(-1));
   return (
-    <header className="sticky top-0 left-0 w-full flex justify-between items-center px-6 py-5 bg-white/40 backdrop-blur-md z-50">
+    <header className="sticky top-0 left-0 w-full flex justify-between items-center px-6 py-5 z-50">
       <img
         src={back}
         alt="back"

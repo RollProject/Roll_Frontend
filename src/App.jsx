@@ -13,7 +13,7 @@ function App() {
       <Snowfall
         color="white"
         radius={[2.0, 3.0]}
-        snowflakeCount={120}
+        snowflakeCount={100}
         style={{
           position: "fixed",
           width: "100vw",
