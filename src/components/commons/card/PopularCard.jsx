@@ -27,7 +27,7 @@ function PopularCard({ id, text, image, participants }) {
     <div
       key={id}
       onClick={handleClick}
-      className="relative w-[165px] h-[175px] bg-cover bg-center flex items-center justify-center text-center cursor-pointer transition-transform hover:scale-[1.03]"
+      className="relative w-[185px] h-[195px] bg-cover bg-center flex items-center justify-center text-center cursor-pointer transition-transform hover:scale-[1.03]"
       style={{
         transform: `rotate(${rotation}deg) translate(${offsetX}px, ${offsetY}px)`,
         backgroundImage: `url(${image})`,

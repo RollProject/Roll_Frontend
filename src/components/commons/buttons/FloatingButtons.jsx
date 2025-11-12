@@ -5,51 +5,40 @@ import { LuSparkles } from "react-icons/lu";
 import WriteModal from "./WriteModal";
 import DecorateModal from "./DecorateModal";
 
-function FloatingButtons({ mode, onWriteComplete }) {
+function FloatingButtons({ mode, onWriteComplete, onDecorateClick }) {
   const [isWriteOpen, setIsWriteOpen] = useState(false);
-  const [isDecorateOpen, setIsDecorateOpen] = useState(false);
 
   const handleWriteClick = () => setIsWriteOpen(true);
-  const handleDecorateClick = () => setIsDecorateOpen(true);
-
   const handleWriteComplete = (data) => {
-    if (onWriteComplete) {
-      onWriteComplete(data);
-    }
+    if (onWriteComplete) onWriteComplete(data);
     setIsWriteOpen(false);
   };
 
-  useEffect(() => {
-    if (isWriteOpen || isDecorateOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+  // 🧩 “꾸미기” 버튼 클릭 시 부모 콜백 실행
+  const handleDecorateClick = () => {
+    if (onDecorateClick) {
+      onDecorateClick(); // ✅ BoardPage의 setIsDecorateModalOpen(true)
     }
+  };
 
+  useEffect(() => {
+    document.body.style.overflow = isWriteOpen ? "hidden" : "unset";
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isWriteOpen, isDecorateOpen]);
+  }, [isWriteOpen]);
 
-  if (isWriteOpen) {
-    return (
-      <>
+  return (
+    <>
+      {/* 📝 메모 작성 모달 */}
+      {isWriteOpen && (
         <WriteModal
           onClose={() => setIsWriteOpen(false)}
           onComplete={handleWriteComplete}
         />
-        {isDecorateOpen && (
-          <DecorateModal onClose={() => setIsDecorateOpen(false)} />
-        )}
-      </>
-    );
-  }
-  return (
-    <>
-      {isDecorateOpen && (
-        <DecorateModal onClose={() => setIsDecorateOpen(false)} />
       )}
 
+      {/* 🪄 플로팅 버튼 UI */}
       <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
         {mode >= 1 && (
           <button
