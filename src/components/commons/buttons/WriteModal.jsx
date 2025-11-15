@@ -55,7 +55,7 @@ function WriteModal({ onClose, onComplete }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-end"
+      className="fixed inset-0 bg-black/50 z-[9999] flex items-end"
       onClick={onClose}
     >
       {/* 2. 모달 컨텐츠 */}
