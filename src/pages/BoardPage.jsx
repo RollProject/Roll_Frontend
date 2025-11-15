@@ -15,6 +15,8 @@ function BoardPage() {
   const [pageTitle, setPageTitle] = useState("로딩 중...");
   const [cardsData, setCardsData] = useState([]);
   const [pageBgColor, setPageBgColor] = useState("bg-gray-100");
+  const [stickers, setStickers] = useState([]);
+
   const { boardId } = useParams();
   const { user, setUser } = useUserStore();
   const navigate = useNavigate();
@@ -28,10 +30,9 @@ function BoardPage() {
 
   const [isMemoModalOpen, setIsMemoModalOpen] = useState(false);
   const [isDecorateModalOpen, setIsDecorateModalOpen] = useState(false);
-  const [selectedSticker, setSelectedSticker] = useState(null); // ✅ 어떤 스티커 선택했는지 저장
-  const [stickers, setStickers] = useState([]);
+  const [selectedSticker, setSelectedSticker] = useState(null);
 
-  // ✅ 세션 확인
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -51,24 +52,22 @@ function BoardPage() {
         } else {
           navigate("/auth");
         }
-      } catch (err) {
-        console.error("❌ 세션 확인 오류:", err);
+      } catch (error) {
+        console.error("❌ 세션 오류:", error);
         navigate("/auth");
       }
     };
+
     fetchUserInfo();
   }, [setUser, navigate]);
 
-  // ✅ 보드 데이터 가져오기
   const fetchBoard = async () => {
-    if (!boardId) return;
-
     const result = await getBoard(boardId);
-    if (result && result.board && Array.isArray(result.papers)) {
+    if (result && result.board) {
       setPageTitle(result.board.RB_title);
       setPageBgColor(result.board.RB_bgcolor);
 
-      const mappedCards = result.papers.map((paper) => ({
+      const mapped = result.papers.map((paper) => ({
         id: paper.RP_id,
         title: paper.RU_nickname,
         text: paper.RP_contents,
@@ -77,9 +76,8 @@ function BoardPage() {
         font: paper.RP_font,
         profileUrl: paper.RU_profile_url,
       }));
-      setCardsData(mappedCards);
-    } else {
-      setPageTitle("보드를 찾을 수 없습니다.");
+
+      setCardsData(mapped);
     }
   };
 
@@ -87,132 +85,162 @@ function BoardPage() {
     fetchBoard();
   }, [boardId]);
 
-  // ✅ 작성 완료 핸들러
-  const handleWriteComplete = async (data) => {
-    if (!user?.RU_id) {
-      alert("사용자 정보를 찾을 수 없습니다.");
-      return;
-    }
-
+  const fetchStickers = async () => {
     try {
-      const result = await createPaper({
-        boardId: boardId,
-        kakao_id: user.kakao_id,
-        content: data.content,
-        font: data.font,
-        color: data.color,
-        align: data.align,
-      });
+      const res = await fetch(
+        `http://localhost:3000/board/${boardId}/stickers`,
+        { credentials: "include" }
+      );
+      const data = await res.json();
 
-      if (result.success) {
-        alert("페이퍼 작성 완료!");
-        await fetchBoard();
-      } else {
-        alert(result.message || "페이퍼 작성 실패");
+      if (data.success) {
+        const boardElement = document.querySelector(".board-wrapper");
+        if (!boardElement) return;
+
+        const w = boardElement.offsetWidth;
+        const h = boardElement.offsetHeight;
+
+        const mapped = data.stickers.map((s) => ({
+          src: s.PS_Type,
+          x: (s.PS_X / 255) * w,
+          y: (s.PS_Y / 255) * h,
+        }));
+
+        setStickers(mapped);
       }
-    } catch (err) {
-      alert(`오류 발생: ${err.message}`);
+    } catch (error) {
+      console.error("❌ 스티커 로딩 오류:", error);
     }
   };
 
-  // ✅ 카드 클릭 → 메모 모달
-  const handleCardClick = (cardData) => {
+  useEffect(() => {
+    setTimeout(fetchStickers, 50);
+  }, [cardsData]);
+
+  const saveStickerToDB = async (sticker) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3000/board/${boardId}/sticker`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            RU_id: user.RU_id,
+            PS_Type: sticker.src,
+            PS_X: sticker.scaledX,
+            PS_Y: sticker.scaledY,
+          }),
+        }
+      );
+      console.log("스티커 저장 결과:", await res.json());
+    } catch (error) {
+      console.error("스티커 저장 오류:", error);
+    }
+  };
+
+  const handleBoardClick = (e) => {
+    if (!selectedSticker) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const rawX = e.clientX - rect.left - 25;
+    const rawY = e.clientY - rect.top - 25;
+
+    const scaledX = Math.min(255, Math.max(0, (rawX / rect.width) * 255));
+    const scaledY = Math.min(255, Math.max(0, (rawY / rect.height) * 255));
+
+    const newSticker = {
+      src: selectedSticker,
+      x: rawX,
+      y: rawY,
+      scaledX: Math.round(scaledX),
+      scaledY: Math.round(scaledY),
+    };
+
+    setStickers((prev) => [...prev, newSticker]);
+    saveStickerToDB(newSticker);
+    setSelectedSticker(null);
+  };
+
+  const openMemoModal = (card) => {
     setModalContent({
-      title: cardData.title,
-      fullContent: cardData.text,
-      profileUrl: cardData.profileUrl,
-      font: cardData.font,
+      title: card.title,
+      fullContent: card.text,
+      profileUrl: card.profileUrl,
+      font: card.font,
     });
     setIsMemoModalOpen(true);
   };
 
-  // ✅ 스티커 선택 시 (DecorateModal → 선택 완료)
-  const handleStickerSelect = (src) => {
-    console.log("✅ 선택된 스티커:", src);
-    setSelectedSticker(src); // 선택만 저장
-    setIsDecorateModalOpen(false); // 모달 닫기
-  };
-
-  // ✅ 보드 클릭 시 선택된 스티커를 클릭 위치에 추가
-  const handleBoardClick = (e) => {
-    if (!selectedSticker) return; // 선택된 스티커 없으면 무시
-
-    // 클릭한 위치 계산
-    const boardRect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - boardRect.left - 25; // 이미지 중앙 정렬용
-    const y = e.clientY - boardRect.top - 25;
-
-    setStickers((prev) => [...prev, { src: selectedSticker, x, y }]);
-    setSelectedSticker(null); // 한 번 붙이면 해제
-  };
 
   if (!user)
     return (
-      <div className="flex justify-center items-center h-screen text-gray-500">
-        세션 확인 중...
+      <div className="flex justify-center items-center h-screen text-gray-300">
+        세션 확인 중…
       </div>
     );
 
   return (
     <div
-      className={`${pageBgColor} min-h-screen relative`}
-      onClick={handleBoardClick} // ✅ 클릭한 위치 감지
+      className={`${pageBgColor} min-h-screen relative board-wrapper`}
+      onClick={handleBoardClick}
     >
       <Header title={pageTitle} leftContent="back" rightContent="아이콘" />
 
-      {/* 📝 카드 목록 */}
       <div className="relative z-10 px-[5px]">
         {cardsData.length > 0 ? (
-          <CardList cards={cardsData} onCardClick={handleCardClick} />
+          <CardList cards={cardsData} onCardClick={openMemoModal} />
         ) : (
-          <div className="flex justify-center items-center w-full h-full py-8 pt-20">
+          <div className="flex justify-center items-center py-20">
             <img
               src={noCardImage}
-              alt="빈 롤링페이퍼"
-              className="w-[193px] h-[193px] opacity-80"
+              alt="empty"
+              className="w-[193px] opacity-80"
             />
           </div>
         )}
       </div>
 
-      {/* 🎀 스티커 전용 레이어 */}
       <div className="absolute inset-0 z-50 pointer-events-none">
-        {stickers.map((sticker, index) => (
+        {stickers.map((s, i) => (
           <img
-            key={index}
-            src={sticker.src}
-            alt={`sticker-${index}`}
-            className="absolute w-[85px] h-[85px] select-none cursor-grab pointer-events-auto"
-            style={{ top: sticker.y, left: sticker.x }}
+            key={i}
+            src={s.src}
+            className="absolute w-[85px] h-[85px] pointer-events-auto select-none"
+            style={{ top: s.y, left: s.x }}
+            onClick={(e) => e.stopPropagation()}
             draggable={false}
-            onClick={(e) => e.stopPropagation()} // 카드 클릭 방지
           />
         ))}
       </div>
 
-      {/* 📄 메모 모달 */}
       <MemoModal
-        title={modalContent.title}
-        fullContent={modalContent.fullContent}
-        profileUrl={modalContent.profileUrl}
-        font={modalContent.font}
+        {...modalContent}
         isOpen={isMemoModalOpen}
         onClose={() => setIsMemoModalOpen(false)}
         boardTitle={pageTitle}
       />
 
-      {/* 🪄 플로팅 버튼 */}
       <FloatingButtons
         mode={2}
-        onWriteComplete={handleWriteComplete}
+        onWriteComplete={async (data) => {
+          const result = await createPaper({
+            boardId,
+            kakao_id: user.kakao_id,
+            content: data.content,
+            font: data.font,
+            color: data.color,
+            align: data.align,
+          });
+          if (result.success) fetchBoard();
+        }}
         onDecorateClick={() => setIsDecorateModalOpen(true)}
       />
 
-      {/* 🎨 스티커 모달 */}
       {isDecorateModalOpen && (
         <DecorateModal
           onClose={() => setIsDecorateModalOpen(false)}
-          onSelect={handleStickerSelect}
+          onSelect={(src) => setSelectedSticker(src)} 
         />
       )}
     </div>
