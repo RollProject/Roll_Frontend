@@ -7,9 +7,11 @@ function MemoModal({
   onClose,
   profileUrl,
   font = "font-sans",
+  fontColor = "text-gray-700",
+  textAlign = "text-left",
 }) {
   if (!isOpen) return null;
-
+  const alignClass = `text-${textAlign || "left"}`;
   return (
     // 1. 모달 배경
     <div
@@ -34,8 +36,10 @@ function MemoModal({
 
         {/* 3. 전체 내용 표시 */}
         <p
-          className={`whitespace-pre-wrap text-gray-700 max-h-80 overflow-y-auto ${font}`}
-          style={{ fontFamily: font.startsWith("font-") ? "" : font }}
+          className={`whitespace-pre-wrap max-h-80 overflow-y-auto 
+                      ${font} 
+                      ${fontColor} 
+                      ${alignClass}`}
         >
           {fullContent}
         </p>

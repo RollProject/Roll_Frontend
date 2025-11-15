@@ -17,6 +17,8 @@ function CardList({ cards, onCardClick }) {
               bgColor={card.bgColor}
               profileUrl={card.profileUrl}
               font={card.font}
+              fontColor={card.fontColor}
+              textAlign={card.textAlign}
               onClick={() => onCardClick?.(card)}
             />
           </div>

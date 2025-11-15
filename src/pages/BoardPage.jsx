@@ -24,6 +24,8 @@ function BoardPage() {
     fullContent: "",
     profileUrl: "",
     font: "font-sans",
+    fontColor: "text-black",
+    textAlign: "text-left",
   });
 
   const [isMemoModalOpen, setIsMemoModalOpen] = useState(false);
@@ -75,6 +77,8 @@ function BoardPage() {
         bgColor: paper.RP_bgcolor,
         font: paper.RP_font,
         profileUrl: paper.RU_profile_url,
+        fontColor: paper.RP_fontColor,
+        textAlign: paper.RP_TextAlign,
       }));
       setCardsData(mappedCards);
     } else {
@@ -101,6 +105,7 @@ function BoardPage() {
         font: data.font,
         color: data.color,
         align: data.align,
+        textColor: data.textColor,
       };
 
       const result = await createPaper(paperData);
@@ -126,6 +131,8 @@ function BoardPage() {
       fullContent: cardData.text,
       profileUrl: cardData.profileUrl,
       font: cardData.font,
+      fontColor: cardData.fontColor,
+      textAlign: cardData.textAlign,
     });
     setIsMemoModalOpen(true);
   };
@@ -185,6 +192,8 @@ function BoardPage() {
         fullContent={modalContent.fullContent}
         profileUrl={modalContent.profileUrl}
         font={modalContent.font}
+        fontColor={modalContent.fontColor}
+        textAlign={modalContent.textAlign}
         isOpen={isMemoModalOpen}
         onClose={() => setIsMemoModalOpen(false)}
         boardTitle={pageTitle}

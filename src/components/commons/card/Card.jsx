@@ -1,6 +1,16 @@
 import React from "react";
 
-function Card({ id, nickname, profileUrl, contents, font, bgColor, onClick }) {
+function Card({
+  id,
+  nickname,
+  profileUrl,
+  contents,
+  font,
+  bgColor,
+  fontColor,
+  textAlign,
+  onClick,
+}) {
   const rotation = Math.random() * 20 - 5;
   const offsetX = Math.random() * 8 - 4;
   const offsetY = Math.random() * 6 - 3;
@@ -15,6 +25,20 @@ function Card({ id, nickname, profileUrl, contents, font, bgColor, onClick }) {
     w-[130px] h-[130px] flex flex-col justify-between items-start p-3 cursor-pointer rounded-lg shadow-md 
     ${bgColor || "bg-white"} 
   `;
+
+  let flexAlignClass;
+  switch (textAlign) {
+    case "left":
+      flexAlignClass = "justify-start";
+      break;
+    case "right":
+      flexAlignClass = "justify-end";
+      break;
+    case "center":
+    default:
+      flexAlignClass = "justify-center";
+  }
+  const textAlignClass = `text-${textAlign || "center"}`;
   return (
     <div
       key={id}
@@ -33,11 +57,12 @@ function Card({ id, nickname, profileUrl, contents, font, bgColor, onClick }) {
         </span>
       </div>
 
-      <div className="flex-1 flex items-center justify-center w-full text-center">
+      <div className={`flex-1 flex items-center w-full ${flexAlignClass}`}>
         <span
-          className={`text-[13px] text-gray-800 leading-snug select-none whitespace-pre-wrap break-keep ${
-            font || "font-sans"
-          }`}
+          className={`text-[13px] leading-snug select-none whitespace-pre-wrap break-keep 
+                      ${font || "font-sans"} 
+                      ${fontColor || "text-gray-800"} 
+                      ${textAlignClass}`}
         >
           {truncatedContents}
         </span>
