@@ -15,10 +15,11 @@ import { createPaper } from "@/api/paper/createPaper";
 import { deleteBoard } from "@/api/board/deleteBoard";
 import { useUserStore } from "@/stores/userStore";
 import { deletePaper } from "@/api/paper/deletePaper";
+
+// ✅ [중요] 반드시 https:// 로 시작해야 합니다!
+const BACKEND_URL = "https://roll-backend.onrender.com";
+
 function BoardPage() {
-  // -------------------------------------------------------
-  // 1. 상태 변수 선언 (State Definition)
-  // -------------------------------------------------------
   const [pageTitle, setPageTitle] = useState("로딩 중...");
   const [pageBgColor, setPageBgColor] = useState("bg-gray-100");
   const [cardsData, setCardsData] = useState([]);
@@ -45,13 +46,12 @@ function BoardPage() {
   const { user, setUser } = useUserStore();
   const navigate = useNavigate();
 
-  // -------------------------------------------------------
-  // 2. 사용자 세션 확인 (User Session)
-  // -------------------------------------------------------
+  // 1. 사용자 세션 확인
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch("https://roll-backend.onrender.com/me", {
+        // ✅ [수정됨] HTTPS 변수 사용
+        const res = await fetch(`${BACKEND_URL}/me`, {
           credentials: "include",
         });
 
@@ -78,9 +78,7 @@ function BoardPage() {
     fetchUserInfo();
   }, [setUser, navigate]);
 
-  // -------------------------------------------------------
-  // 3. 보드 및 페이퍼 데이터 불러오기 (Fetch Board Data)
-  // -------------------------------------------------------
+  // 2. 보드 데이터 불러오기
   const fetchBoard = async () => {
     if (!boardId) return;
     const result = await getBoard(boardId);
@@ -102,7 +100,7 @@ function BoardPage() {
         textAlign: paper.RP_TextAlign,
         authorId: paper.RP_RU_id || paper.RU_id,
       }));
-
+      console.log("카드 데이터 확인:", mappedCards);
       setCardsData(mappedCards);
     } else {
       console.warn("API 데이터 수신 실패", result);
@@ -114,17 +112,13 @@ function BoardPage() {
     fetchBoard();
   }, [boardId]);
 
-  // -------------------------------------------------------
-  // 4. 스티커 관련 로직 (Sticker Logic)
-  // -------------------------------------------------------
-
-  // 스티커 불러오기
+  // 3. 스티커 불러오기
   const fetchStickers = async () => {
     try {
-      const res = await fetch(
-        `https://roll-backend.onrender.com/board/${boardId}/stickers`,
-        { credentials: "include" }
-      );
+      // ✅ [수정됨] HTTPS 변수 사용
+      const res = await fetch(`${BACKEND_URL}/board/${boardId}/stickers`, {
+        credentials: "include",
+      });
       const data = await res.json();
 
       if (data.success) {
@@ -135,7 +129,10 @@ function BoardPage() {
         const h = boardElement.offsetHeight;
 
         const mapped = data.stickers.map((s) => ({
-          src: s.PS_Type,
+          // DB에 저장된 경로가 http로 시작하면 https로 교체, 아니면 BACKEND_URL 붙이기
+          src: s.PS_Type.startsWith("http")
+            ? s.PS_Type.replace("http://", "https://")
+            : `${BACKEND_URL}${s.PS_Type}`,
           x: (s.PS_X / 255) * w,
           y: (s.PS_Y / 255) * h,
         }));
@@ -147,22 +144,23 @@ function BoardPage() {
     }
   };
 
-  // 카드가 로드된 후 약간의 딜레이를 주고 스티커 위치 계산 (DOM 렌더링 대기)
   useEffect(() => {
     const timer = setTimeout(fetchStickers, 50);
     return () => clearTimeout(timer);
   }, [cardsData]);
 
-  // 스티커 DB 저장
+  // 4. 스티커 DB 저장
   const saveStickerToDB = async (sticker) => {
     try {
-      await fetch(`http://roll-backend.onrender.com/board/${boardId}/sticker`, {
+      // ✅ [수정됨] 여기가 문제였습니다! http -> https (BACKEND_URL 변수 사용)
+      await fetch(`${BACKEND_URL}/board/${boardId}/sticker`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
           RU_id: user.RU_id,
-          PS_Type: sticker.src,
+          // 저장할 때는 도메인 없이 경로만 저장하거나, 그대로 저장
+          PS_Type: sticker.src.replace(BACKEND_URL, ""),
           PS_X: sticker.scaledX,
           PS_Y: sticker.scaledY,
         }),
@@ -172,15 +170,13 @@ function BoardPage() {
     }
   };
 
-  // 보드 클릭 시 스티커 부착
   const handleBoardClick = (e) => {
     if (!selectedSticker) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
-    const rawX = e.clientX - rect.left - 25; // 스티커 중심 보정
+    const rawX = e.clientX - rect.left - 25;
     const rawY = e.clientY - rect.top - 25;
 
-    // 0~255 좌표계로 변환
     const scaledX = Math.min(255, Math.max(0, (rawX / rect.width) * 255));
     const scaledY = Math.min(255, Math.max(0, (rawY / rect.height) * 255));
 
@@ -194,14 +190,9 @@ function BoardPage() {
 
     setStickers((prev) => [...prev, newSticker]);
     saveStickerToDB(newSticker);
-    setSelectedSticker(null); // 부착 후 선택 해제
+    setSelectedSticker(null);
   };
 
-  // -------------------------------------------------------
-  // 5. 핸들러 함수들 (Handlers: Write, Delete, Click)
-  // -------------------------------------------------------
-
-  // 페이퍼 작성 완료 핸들러
   const handleWriteComplete = async (data) => {
     if (!user?.RU_id) {
       alert("사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
@@ -234,7 +225,6 @@ function BoardPage() {
     }
   };
 
-  // 보드 삭제 핸들러
   const handleDeleteBoard = async () => {
     const isConfirmed = window.confirm(
       "정말로 이 보드를 삭제하시겠습니까?\n모든 롤링페이퍼가 영구히 삭제됩니다."
@@ -255,7 +245,6 @@ function BoardPage() {
     }
   };
 
-  // 카드 클릭 (메모 모달 열기)
   const handleCardClick = (cardData) => {
     setModalContent({
       id: cardData.id,
@@ -271,23 +260,22 @@ function BoardPage() {
     });
     setIsMemoModalOpen(true);
   };
+
   const handleDeletePaper = async (paperId) => {
     if (!window.confirm("정말 이 메시지를 삭제하시겠습니까?")) return;
 
     try {
       const result = await deletePaper(paperId, user.RU_id);
 
-      // ✅ 성공이든 실패(403: 이미 삭제됨)든 화면에서는 지워주는 게 사용자 경험상 좋습니다.
       if (result.success) {
         alert("삭제되었습니다.");
       } else if (result.message.includes("이미 삭제된")) {
-        alert("이미 삭제된 메시지입니다."); // 403 에러지만 성공처럼 처리
+        alert("이미 삭제된 메시지입니다.");
       } else {
         alert(result.message);
-        return; // 진짜 권한 없음이면 여기서 중단
+        return;
       }
 
-      // 👋 공통 처리: 모달 닫고 목록 새로고침
       setIsMemoModalOpen(false);
       await fetchBoard();
     } catch (err) {
@@ -295,9 +283,7 @@ function BoardPage() {
       alert("오류가 발생했습니다.");
     }
   };
-  // -------------------------------------------------------
-  // 6. 렌더링 (Render)
-  // -------------------------------------------------------
+
   if (!user)
     return (
       <div className="flex justify-center items-center h-screen text-gray-300">
@@ -317,7 +303,6 @@ function BoardPage() {
         onRightClick={handleDeleteBoard}
       />
 
-      {/* 카드 리스트 영역 */}
       <div className="relative z-10 px-[5px]">
         {cardsData.length > 0 ? (
           <CardList cards={cardsData} onCardClick={handleCardClick} />
@@ -332,7 +317,6 @@ function BoardPage() {
         )}
       </div>
 
-      {/* 스티커 레이어 (클릭 통과, 이미지는 클릭 막음) */}
       <div className="absolute inset-0 z-50 pointer-events-none">
         {stickers.map((s, i) => (
           <img
@@ -341,22 +325,14 @@ function BoardPage() {
             alt="sticker"
             className="absolute w-[85px] h-[85px] pointer-events-auto select-none"
             style={{ top: s.y, left: s.x }}
-            onClick={(e) => e.stopPropagation()} // 스티커 클릭 시 보드 클릭 이벤트 전파 방지
+            onClick={(e) => e.stopPropagation()}
             draggable={false}
           />
         ))}
       </div>
 
-      {/* 메모 상세 보기 모달 */}
       <MemoModal
-        title={modalContent.title}
-        fullContent={modalContent.fullContent}
-        profileUrl={modalContent.profileUrl}
-        bgColor={modalContent.bgColor}
-        bgImage={modalContent.bgImage}
-        font={modalContent.font}
-        fontColor={modalContent.fontColor}
-        textAlign={modalContent.textAlign}
+        {...modalContent}
         onDelete={() => handleDeletePaper(modalContent.id)}
         isMine={modalContent.isMine}
         isOpen={isMemoModalOpen}
@@ -364,14 +340,12 @@ function BoardPage() {
         boardTitle={pageTitle}
       />
 
-      {/* 플로팅 버튼 (글쓰기 & 꾸미기) */}
       <FloatingButtons
         mode={2}
         onWriteComplete={handleWriteComplete}
         onDecorateClick={() => setIsDecorateModalOpen(true)}
       />
 
-      {/* 스티커 선택 모달 */}
       {isDecorateModalOpen && (
         <DecorateModal
           onClose={() => setIsDecorateModalOpen(false)}

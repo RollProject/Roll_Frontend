@@ -1,8 +1,7 @@
-// src/components/commons/modal/MemoModal.jsx
-
 import React from "react";
-import { FiTrash2 } from "react-icons/fi"; // 아이콘 쓰려면 설치 (npm install react-icons)
-// 아이콘 없으면 그냥 "삭제" 텍스트로 하셔도 됩니다.
+import { FiTrash2 } from "react-icons/fi";
+
+const BACKEND_URL = "https://roll-backend.onrender.com";
 
 function MemoModal({
   title,
@@ -15,14 +14,12 @@ function MemoModal({
   font = "font-sans",
   fontColor = "text-gray-700",
   textAlign = "text-left",
-
-  // 👇 새로 추가된 props
   isMine,
   onDelete,
 }) {
   if (!isOpen) return null;
   const alignClass = `text-${textAlign || "left"}`;
-  const imageUrl = bgImage ? `http://localhost:3000${bgImage}` : null;
+  const imageUrl = bgImage ? `${BACKEND_URL}${bgImage}` : null;
 
   return (
     <div

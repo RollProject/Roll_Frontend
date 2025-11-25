@@ -1,5 +1,5 @@
 import React from "react";
-
+const BACKEND_URL = "https://roll-backend.onrender.com";
 function Card({
   id,
   nickname,
@@ -40,7 +40,7 @@ function Card({
       flexAlignClass = "justify-center";
   }
   const textAlignClass = `text-${textAlign || "center"}`;
-  const imageUrl = bgImage ? `http://localhost:3000${bgImage}` : null;
+  const imageUrl = bgImage ? `${BACKEND_URL}${bgImage}` : null;
 
   return (
     <div
