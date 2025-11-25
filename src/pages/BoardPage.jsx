@@ -14,7 +14,7 @@ import { getBoard } from "@/api/board/getBoard";
 import { createPaper } from "@/api/paper/createPaper";
 import { deleteBoard } from "@/api/board/deleteBoard";
 import { useUserStore } from "@/stores/userStore";
-
+import { deletePaper } from "@/api/paper/deletePaper";
 function BoardPage() {
   // -------------------------------------------------------
   // 1. 상태 변수 선언 (State Definition)
@@ -37,6 +37,8 @@ function BoardPage() {
     font: "font-sans",
     fontColor: "text-black",
     textAlign: "text-left",
+    bgColor: "bg-white",
+    bgImage: null,
   });
 
   const { boardId } = useParams();
@@ -91,11 +93,13 @@ function BoardPage() {
         title: paper.RU_nickname,
         text: paper.RP_contents,
         image: paper.RU_profile_url,
+        bgImage: paper.RP_bgImage,
         bgColor: paper.RP_bgcolor,
         font: paper.RP_font,
         profileUrl: paper.RU_profile_url,
         fontColor: paper.RP_fontColor,
         textAlign: paper.RP_TextAlign,
+        authorId: paper.RP_RU_id || paper.RU_id,
       }));
 
       setCardsData(mappedCards);
@@ -251,6 +255,7 @@ function BoardPage() {
         color: data.color,
         align: data.align,
         textColor: data.textColor,
+        file: data.file,
       });
 
       if (result.success) {
@@ -287,16 +292,43 @@ function BoardPage() {
   // 카드 클릭 (메모 모달 열기)
   const handleCardClick = (cardData) => {
     setModalContent({
+      id: cardData.id,
       title: cardData.title,
       fullContent: cardData.text,
       profileUrl: cardData.profileUrl,
+      bgColor: cardData.bgColor,
+      bgImage: cardData.bgImage,
       font: cardData.font,
       fontColor: cardData.fontColor,
       textAlign: cardData.textAlign,
+      isMine: user?.RU_id === cardData.authorId,
     });
     setIsMemoModalOpen(true);
   };
+  const handleDeletePaper = async (paperId) => {
+    if (!window.confirm("정말 이 메시지를 삭제하시겠습니까?")) return;
 
+    try {
+      const result = await deletePaper(paperId, user.RU_id);
+
+      // ✅ 성공이든 실패(403: 이미 삭제됨)든 화면에서는 지워주는 게 사용자 경험상 좋습니다.
+      if (result.success) {
+        alert("삭제되었습니다.");
+      } else if (result.message.includes("이미 삭제된")) {
+        alert("이미 삭제된 메시지입니다."); // 403 에러지만 성공처럼 처리
+      } else {
+        alert(result.message);
+        return; // 진짜 권한 없음이면 여기서 중단
+      }
+
+      // 👋 공통 처리: 모달 닫고 목록 새로고침
+      setIsMemoModalOpen(false);
+      await fetchBoard();
+    } catch (err) {
+      console.error(err);
+      alert("오류가 발생했습니다.");
+    }
+  };
   // -------------------------------------------------------
   // 6. 렌더링 (Render)
   // -------------------------------------------------------
@@ -354,9 +386,13 @@ function BoardPage() {
         title={modalContent.title}
         fullContent={modalContent.fullContent}
         profileUrl={modalContent.profileUrl}
+        bgColor={modalContent.bgColor}
+        bgImage={modalContent.bgImage}
         font={modalContent.font}
         fontColor={modalContent.fontColor}
         textAlign={modalContent.textAlign}
+        onDelete={() => handleDeletePaper(modalContent.id)}
+        isMine={modalContent.isMine}
         isOpen={isMemoModalOpen}
         onClose={() => setIsMemoModalOpen(false)}
         boardTitle={pageTitle}

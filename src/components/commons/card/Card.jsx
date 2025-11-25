@@ -9,21 +9,22 @@ function Card({
   bgColor,
   fontColor,
   textAlign,
+  bgImage,
   onClick,
 }) {
   const rotation = Math.random() * 20 - 5;
   const offsetX = Math.random() * 8 - 4;
   const offsetY = Math.random() * 6 - 3;
-  console.log("🧾 카드 내용:", contents);
 
   const CHARACTER_LIMIT = 55;
   const truncatedContents =
     contents.length > CHARACTER_LIMIT
       ? contents.substring(0, CHARACTER_LIMIT) + "..."
       : contents;
+
   const cardClasses = `
-    w-[130px] h-[130px] flex flex-col justify-between items-start p-3 cursor-pointer rounded-lg shadow-md 
-    ${bgColor || "bg-white"} 
+    w-[130px] h-[130px] flex flex-col justify-between items-start p-3 cursor-pointer rounded-lg shadow-md relative overflow-hidden
+    ${!bgImage ? bgColor || "bg-white" : ""} 
   `;
 
   let flexAlignClass;
@@ -39,6 +40,8 @@ function Card({
       flexAlignClass = "justify-center";
   }
   const textAlignClass = `text-${textAlign || "center"}`;
+  const imageUrl = bgImage ? `http://localhost:3000${bgImage}` : null;
+
   return (
     <div
       key={id}
@@ -48,16 +51,30 @@ function Card({
       }}
       onClick={onClick}
     >
-      <div className="flex items-center gap-2">
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt="background"
+          className="absolute inset-0 w-full h-full object-cover -z-0 opacity-90"
+        />
+      )}
+
+      <div className="flex items-center gap-2 relative z-10">
         {profileUrl && (
-          <img src={profileUrl} alt="작성자" className="w-6 h-6 rounded-full" />
+          <img
+            src={profileUrl}
+            alt="작성자"
+            className="w-6 h-6 rounded-full border border-white/50"
+          />
         )}
-        <span className="text-[13px] text-gray-800 truncate font-sans">
+        <span className="text-[13px] text-gray-800 truncate font-sans font-bold bg-white/30 rounded px-1">
           {nickname}
         </span>
       </div>
 
-      <div className={`flex-1 flex items-center w-full ${flexAlignClass}`}>
+      <div
+        className={`flex-1 flex items-center w-full relative z-10 ${flexAlignClass}`}
+      >
         <span
           className={`text-[13px] leading-snug select-none whitespace-pre-wrap break-keep 
                       ${font || "font-sans"} 

@@ -15,6 +15,7 @@ function CardList({ cards, onCardClick }) {
               nickname={card.title}
               contents={card.text}
               bgColor={card.bgColor}
+              bgImage={card.bgImage}
               profileUrl={card.profileUrl}
               font={card.font}
               fontColor={card.fontColor}
