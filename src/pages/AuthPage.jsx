@@ -2,10 +2,8 @@ import BasicButton from "@/components/commons/buttons/BasicButton";
 
 function AuthPage() {
   const handleLogin = () => {
-    window.location.href = "http://localhost:3000/auth/kakao/login";
+    window.location.href = "https://roll-backend.onrender.com/auth/kakao/login";
   };
-
-  // <div onClick={() => window.location.href = "http://localhost:3000/auth/kakao/login"}>
 
   return (
     <div className="flex flex-col items-center justify-center mt-[200px] bg-white px-[23px] gap-[75px]">
