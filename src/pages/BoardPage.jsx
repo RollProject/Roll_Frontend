@@ -152,7 +152,7 @@ function BoardPage() {
   // 스티커 DB 저장
   const saveStickerToDB = async (sticker) => {
     try {
-      await fetch(`http://localhost:3000/board/${boardId}/sticker`, {
+      await fetch(`http://roll-backend.onrender.com/board/${boardId}/sticker`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
