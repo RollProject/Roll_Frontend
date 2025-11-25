@@ -150,20 +150,55 @@ function BoardPage() {
 
   // 스티커 DB 저장
   const saveStickerToDB = async (sticker) => {
+    // 1. 방어 코드: 유저 정보나 보드 ID가 없으면 중단
+    if (!user || !user.RU_id) {
+      console.error(
+        "❌ 오류: 사용자 정보(RU_id)가 없습니다. 로그인 상태를 확인하세요."
+      );
+      alert("로그인 정보가 확인되지 않아 저장할 수 없습니다.");
+      return;
+    }
+
+    // 2. 좌표값 NaN(숫자 아님) 체크
+    if (isNaN(sticker.scaledX) || isNaN(sticker.scaledY)) {
+      console.error("❌ 오류: 좌표 계산 실패", sticker);
+      return;
+    }
+
+    console.log("📤 스티커 저장 요청 데이터:", {
+      RB_id: boardId,
+      RU_id: user.RU_id,
+      PS_Type: sticker.src,
+      PS_X: sticker.scaledX,
+      PS_Y: sticker.scaledY,
+    });
+
     try {
-      await fetch(`http://localhost:3000/board/${boardId}/sticker`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          RU_id: user.RU_id,
-          PS_Type: sticker.src,
-          PS_X: sticker.scaledX,
-          PS_Y: sticker.scaledY,
-        }),
-      });
+      const res = await fetch(
+        `http://localhost:3000/board/${boardId}/sticker`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            RB_id: boardId, // 백엔드가 혹시 body에서 찾을 수도 있으니 추가
+            RU_id: user.RU_id, // 사용자 ID
+            PS_Type: sticker.src, // 스티커 이미지 경로
+            PS_X: sticker.scaledX,
+            PS_Y: sticker.scaledY,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "서버 에러 발생");
+      }
+
+      console.log("✅ 스티커 저장 성공:", data);
     } catch (error) {
-      console.error("스티커 저장 오류:", error);
+      console.error("❌ 스티커 저장 API 오류:", error);
     }
   };
 
