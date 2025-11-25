@@ -49,9 +49,10 @@ function BoardPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch("http://localhost:3000/me", {
+        const res = await fetch("https://roll-backend.onrender.com/me", {
           credentials: "include",
         });
+
         const data = await res.json();
 
         if (data.success) {
@@ -117,7 +118,7 @@ function BoardPage() {
   const fetchStickers = async () => {
     try {
       const res = await fetch(
-        `http://localhost:3000/board/${boardId}/stickers`,
+        `https://roll-backend.onrender.com/board/${boardId}/stickers`,
         { credentials: "include" }
       );
       const data = await res.json();
@@ -151,17 +152,20 @@ function BoardPage() {
   // 스티커 DB 저장
   const saveStickerToDB = async (sticker) => {
     try {
-      await fetch(`http://localhost:3000/board/${boardId}/sticker`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          RU_id: user.RU_id,
-          PS_Type: sticker.src,
-          PS_X: sticker.scaledX,
-          PS_Y: sticker.scaledY,
-        }),
-      });
+      await fetch(
+        `https://roll-backend.onrender.com/board/${boardId}/sticker`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            RU_id: user.RU_id,
+            PS_Type: sticker.src,
+            PS_X: sticker.scaledX,
+            PS_Y: sticker.scaledY,
+          }),
+        }
+      );
     } catch (error) {
       console.error("스티커 저장 오류:", error);
     }

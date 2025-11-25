@@ -70,11 +70,14 @@ function LandingPage() {
 
   // ✅ 유저 세션 확인 (/me)
   useEffect(() => {
+    const API_URL = "https://roll-backend.onrender.com"; // ← 직접 추가!
+
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch("http://localhost:3000/me", {
+        const res = await fetch(`${API_URL}/me`, {
           credentials: "include",
         });
+
         const data = await res.json();
         console.log("🧠 /auth/me 응답:", data);
 
@@ -94,6 +97,7 @@ function LandingPage() {
         navigate("/auth");
       }
     };
+
     fetchUserInfo();
   }, [setUser, navigate]);
 
@@ -123,27 +127,33 @@ function LandingPage() {
     }
     fetchPopular();
   }, []);
-
   // ✅ 세션 재확인 (/session-info)
   useEffect(() => {
+    const API_URL = "https://roll-backend.onrender.com"; // ← 직접 추가!
+
     const checkSession = async () => {
       try {
-        const res = await fetch("http://localhost:3000/session/session-info", {
+        const res = await fetch(`${API_URL}/session/session-info`, {
           credentials: "include",
         });
-        if (!res.ok) throw new Error("세션 정보 요청 실패");
-        const data = await res.json();
 
+        if (!res.ok) throw new Error("세션 정보 요청 실패");
+
+        const data = await res.json();
         console.log("🟢 세션 응답 전체:", data);
         console.log("👤 사용자 정보:", data.sessionData?.kakaoUser);
 
-        if (data.sessionData?.kakaoUser) setUser(data.sessionData.kakaoUser);
-        else navigate("/auth");
+        if (data.sessionData?.kakaoUser) {
+          setUser(data.sessionData.kakaoUser);
+        } else {
+          navigate("/auth");
+        }
       } catch (err) {
         console.error("세션 확인 실패:", err);
         navigate("/auth");
       }
     };
+
     checkSession();
   }, [setUser, navigate]);
 

@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000", 
-  withCredentials: true, 
+  baseURL: "https://roll-backend.onrender.com", // ✔ localhost → Render 주소
+  withCredentials: true, // ✔ 쿠키를 공유하려면 반드시 필요
   headers: {
     "Content-Type": "application/json",
   },

@@ -72,9 +72,13 @@ function BoardCreatePage() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const res = await fetch("http://localhost:3000/session/session-info", {
-          credentials: "include",
-        });
+        const res = await fetch(
+          "https://roll-backend.onrender.com/session/session-info",
+          {
+            credentials: "include", // 세션 쿠키 필수
+          }
+        );
+
         if (!res.ok) throw new Error("세션 정보 요청 실패");
         const data = await res.json();
 
