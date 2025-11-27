@@ -16,7 +16,6 @@ import { deleteBoard } from "@/api/board/deleteBoard";
 import { useUserStore } from "@/stores/userStore";
 import { deletePaper } from "@/api/paper/deletePaper";
 
-// ✅ [중요] 반드시 https:// 로 시작해야 합니다!
 const BACKEND_URL = "https://roll-backend.onrender.com";
 
 function BoardPage() {
@@ -24,14 +23,16 @@ function BoardPage() {
   const [pageBgColor, setPageBgColor] = useState("bg-gray-100");
   const [cardsData, setCardsData] = useState([]);
 
-  // 스티커 관련 상태
+  // 스티커 상태
   const [stickers, setStickers] = useState([]);
   const [selectedSticker, setSelectedSticker] = useState(null);
 
-  // 모달 관련 상태
+  // 모달 상태
   const [isMemoModalOpen, setIsMemoModalOpen] = useState(false);
   const [isDecorateModalOpen, setIsDecorateModalOpen] = useState(false);
+
   const [modalContent, setModalContent] = useState({
+    id: null,
     title: "",
     fullContent: "",
     profileUrl: "",
@@ -40,22 +41,25 @@ function BoardPage() {
     textAlign: "text-left",
     bgColor: "bg-white",
     bgImage: null,
+    isMine: false,
   });
 
   const { boardId } = useParams();
   const { user, setUser } = useUserStore();
   const navigate = useNavigate();
 
+  // -------------------------------------------------------
   // 1. 사용자 세션 확인
+  // -------------------------------------------------------
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        // ✅ [수정됨] HTTPS 변수 사용
+        console.log("🟦 /me 요청");
         const res = await fetch(`${BACKEND_URL}/me`, {
           credentials: "include",
         });
-
         const data = await res.json();
+        console.log("🟨 /me 응답:", data);
 
         if (data.success) {
           setUser({
@@ -66,11 +70,9 @@ function BoardPage() {
             RU_id: data.data.RU_id,
           });
         } else {
-          console.warn("세션 만료:", data.message);
           navigate("/auth");
         }
       } catch (error) {
-        console.error("❌ 세션 오류:", error);
         navigate("/auth");
       }
     };
@@ -78,33 +80,36 @@ function BoardPage() {
     fetchUserInfo();
   }, [setUser, navigate]);
 
+  // -------------------------------------------------------
   // 2. 보드 데이터 불러오기
+  // -------------------------------------------------------
   const fetchBoard = async () => {
+    console.log("🟦 보드 조회 요청:", boardId);
     if (!boardId) return;
-    const result = await getBoard(boardId);
 
-    if (result && result.board && Array.isArray(result.papers)) {
+    const result = await getBoard(boardId);
+    console.log("🟨 getBoard 응답:", result);
+
+    if (result?.board && Array.isArray(result.papers)) {
       setPageTitle(result.board.RB_title);
       setPageBgColor(result.board.RB_bgcolor);
 
-      const mappedCards = result.papers.map((paper) => ({
-        id: paper.RP_id,
-        title: paper.RU_nickname,
-        text: paper.RP_contents,
-        image: paper.RU_profile_url,
-        bgImage: paper.RP_bgImage,
-        bgColor: paper.RP_bgcolor,
-        font: paper.RP_font,
-        profileUrl: paper.RU_profile_url,
-        fontColor: paper.RP_fontColor,
-        textAlign: paper.RP_TextAlign,
-        authorId: paper.RP_RU_id || paper.RU_id,
+      const mapped = result.papers.map((p) => ({
+        id: p.RP_id,
+        title: p.RU_nickname,
+        text: p.RP_contents,
+        image: p.RU_profile_url,
+        bgImage: p.RP_bgImage,
+        bgColor: p.RP_bgcolor,
+        font: p.RP_font,
+        profileUrl: p.RU_profile_url,
+        fontColor: p.RP_fontColor,
+        textAlign: p.RP_TextAlign,
+        authorId: p.RP_RU_id ?? p.RU_id,
       }));
-      console.log("카드 데이터 확인:", mappedCards);
-      setCardsData(mappedCards);
-    } else {
-      console.warn("API 데이터 수신 실패", result);
-      setPageTitle("보드를 찾을 수 없습니다.");
+
+      console.log("🟩 매핑된 카드:", mapped);
+      setCardsData(mapped);
     }
   };
 
@@ -112,66 +117,86 @@ function BoardPage() {
     fetchBoard();
   }, [boardId]);
 
+  // -------------------------------------------------------
   // 3. 스티커 불러오기
+  // -------------------------------------------------------
   const fetchStickers = async () => {
     try {
-      // ✅ [수정됨] HTTPS 변수 사용
+      console.log(
+        "🟦 스티커 조회:",
+        `${BACKEND_URL}/board/${boardId}/stickers`
+      );
       const res = await fetch(`${BACKEND_URL}/board/${boardId}/stickers`, {
         credentials: "include",
       });
       const data = await res.json();
+      console.log("🟨 스티커 응답:", data);
 
       if (data.success) {
-        const boardElement = document.querySelector(".board-wrapper");
-        if (!boardElement) return;
+        const board = document.querySelector(".board-wrapper");
+        if (!board) return;
 
-        const w = boardElement.offsetWidth;
-        const h = boardElement.offsetHeight;
+        const w = board.offsetWidth;
+        const h = board.offsetHeight;
 
         const mapped = data.stickers.map((s) => ({
-          // DB에 저장된 경로가 http로 시작하면 https로 교체, 아니면 BACKEND_URL 붙이기
-          src: s.PS_Type.startsWith("http")
-            ? s.PS_Type.replace("http://", "https://")
-            : `${BACKEND_URL}${s.PS_Type}`,
+          src: s.PS_Type.startsWith("/")
+            ? s.PS_Type
+            : s.PS_Type.replace("http://", "https://"),
           x: (s.PS_X / 255) * w,
           y: (s.PS_Y / 255) * h,
         }));
 
+        console.log("🟩 매핑된 스티커:", mapped);
         setStickers(mapped);
       }
-    } catch (error) {
-      console.error("❌ 스티커 로딩 오류:", error);
+    } catch (err) {
+      console.error("❌ 스티커 로딩 에러:", err);
     }
   };
 
   useEffect(() => {
-    const timer = setTimeout(fetchStickers, 50);
-    return () => clearTimeout(timer);
+    const t = setTimeout(fetchStickers, 50);
+    return () => clearTimeout(t);
   }, [cardsData]);
 
-  // 4. 스티커 DB 저장
+  // -------------------------------------------------------
+  // 4. 스티커 저장
+  // -------------------------------------------------------
   const saveStickerToDB = async (sticker) => {
     try {
-      // ✅ [수정됨] 여기가 문제였습니다! http -> https (BACKEND_URL 변수 사용)
-      await fetch(`${BACKEND_URL}/board/${boardId}/sticker`, {
+      console.log("🆕 NEW STICKER:", sticker);
+
+      const payload = {
+        RU_id: user.RU_id,
+        PS_Type: sticker.src,
+        PS_X: sticker.scaledX,
+        PS_Y: sticker.scaledY,
+      };
+
+      console.log("📤 payload:", payload);
+
+      const res = await fetch(`${BACKEND_URL}/board/${boardId}/sticker`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          RU_id: user.RU_id,
-          // 저장할 때는 도메인 없이 경로만 저장하거나, 그대로 저장
-          PS_Type: sticker.src.replace(BACKEND_URL, ""),
-          PS_X: sticker.scaledX,
-          PS_Y: sticker.scaledY,
-        }),
+        body: JSON.stringify(payload),
       });
-    } catch (error) {
-      console.error("❌ 스티커 저장 API 오류:", error);
+
+      const data = await res.json();
+      console.log("📥 저장 응답:", data);
+    } catch (err) {
+      console.error("❌ 스티커 저장 오류:", err);
     }
   };
 
+  // -------------------------------------------------------
+  // 5. 스티커 클릭 → 저장
+  // -------------------------------------------------------
   const handleBoardClick = (e) => {
     if (!selectedSticker) return;
+
+    console.log("💛 선택된 스티커:", selectedSticker);
 
     const rect = e.currentTarget.getBoundingClientRect();
     const rawX = e.clientX - rect.left - 25;
@@ -188,24 +213,20 @@ function BoardPage() {
       scaledY: Math.round(scaledY),
     };
 
+    console.log("🆕 final sticker:", newSticker);
+
     setStickers((prev) => [...prev, newSticker]);
     saveStickerToDB(newSticker);
     setSelectedSticker(null);
   };
 
+  // -------------------------------------------------------
+  // ⭐ 기존 기능 1: 메시지 작성
+  // -------------------------------------------------------
   const handleWriteComplete = async (data) => {
-    if (!user?.RU_id) {
-      alert("사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
-      return;
-    }
-    if (!boardId) {
-      alert("보드 ID를 찾을 수 없습니다.");
-      return;
-    }
-
     try {
       const result = await createPaper({
-        boardId: boardId,
+        boardId,
         kakao_id: user.kakao_id,
         content: data.content,
         font: data.font,
@@ -216,136 +237,122 @@ function BoardPage() {
       });
 
       if (result.success) {
-        await fetchBoard();
+        fetchBoard();
       } else {
-        alert(result.message || "페이퍼 작성에 실패했습니다.");
+        alert(result.message);
       }
-    } catch (err) {
-      alert(`오류 발생: ${err.message}`);
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  const handleDeleteBoard = async () => {
-    const isConfirmed = window.confirm(
-      "정말로 이 보드를 삭제하시겠습니까?\n모든 롤링페이퍼가 영구히 삭제됩니다."
-    );
-
-    if (isConfirmed) {
-      try {
-        const result = await deleteBoard(boardId);
-        if (result.success) {
-          alert(result.message);
-          navigate("/");
-        } else {
-          alert(result.message);
-        }
-      } catch (err) {
-        alert("삭제 중 오류가 발생했습니다.");
-      }
-    }
-  };
-
-  const handleCardClick = (cardData) => {
+  // -------------------------------------------------------
+  // ⭐ 기존 기능 2: 카드 클릭 → 모달 열림
+  // -------------------------------------------------------
+  const handleCardClick = (c) => {
     setModalContent({
-      id: cardData.id,
-      title: cardData.title,
-      fullContent: cardData.text,
-      profileUrl: cardData.profileUrl,
-      bgColor: cardData.bgColor,
-      bgImage: cardData.bgImage,
-      font: cardData.font,
-      fontColor: cardData.fontColor,
-      textAlign: cardData.textAlign,
-      isMine: user?.RU_id === cardData.authorId,
+      id: c.id,
+      title: c.title,
+      fullContent: c.text,
+      profileUrl: c.profileUrl,
+      bgColor: c.bgColor,
+      bgImage: c.bgImage,
+      font: c.font,
+      fontColor: c.fontColor,
+      textAlign: c.textAlign,
+      isMine: user?.RU_id === c.authorId,
     });
+
     setIsMemoModalOpen(true);
   };
 
-  const handleDeletePaper = async (paperId) => {
-    if (!window.confirm("정말 이 메시지를 삭제하시겠습니까?")) return;
+  // -------------------------------------------------------
+  // ⭐ 기존 기능 3: 페이퍼 삭제
+  // -------------------------------------------------------
+  const handleDeletePaper = async (id) => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-    try {
-      const result = await deletePaper(paperId, user.RU_id);
+    const res = await deletePaper(id, user.RU_id);
 
-      if (result.success) {
-        alert("삭제되었습니다.");
-      } else if (result.message.includes("이미 삭제된")) {
-        alert("이미 삭제된 메시지입니다.");
-      } else {
-        alert(result.message);
-        return;
-      }
-
+    if (res.success) {
       setIsMemoModalOpen(false);
-      await fetchBoard();
-    } catch (err) {
-      console.error(err);
-      alert("오류가 발생했습니다.");
+      fetchBoard();
+    } else {
+      alert(res.message);
     }
   };
 
-  if (!user)
-    return (
-      <div className="flex justify-center items-center h-screen text-gray-300">
-        세션 확인 중…
-      </div>
-    );
+  // -------------------------------------------------------
+  // ⭐ 기존 기능 4: 보드 삭제
+  // -------------------------------------------------------
+  const handleDeleteBoard = async () => {
+    if (!window.confirm("정말 보드를 삭제하시겠습니까?")) return;
+    const res = await deleteBoard(boardId);
 
+    if (res.success) {
+      navigate("/");
+    } else {
+      alert(res.message);
+    }
+  };
+
+  // -------------------------------------------------------
+  // 6. 렌더링
+  // -------------------------------------------------------
   return (
     <div
       className={`${pageBgColor} min-h-screen relative board-wrapper`}
       onClick={handleBoardClick}
     >
+      {/* 헤더 */}
       <Header
         title={pageTitle}
         leftContent="back"
         rightContent="아이콘"
-        onRightClick={handleDeleteBoard}
+        onRightClick={() => deleteBoard(boardId)}
       />
 
+      {/* 카드 */}
       <div className="relative z-10 px-[5px]">
         {cardsData.length > 0 ? (
           <CardList cards={cardsData} onCardClick={handleCardClick} />
         ) : (
-          <div className="flex justify-center items-center py-20">
-            <img
-              src={noCardImage}
-              alt="empty"
-              className="w-[193px] opacity-80"
-            />
+          <div className="flex justify-center py-20">
+            <img src={noCardImage} className="w-[180px] opacity-80" />
           </div>
         )}
       </div>
 
+      {/* 스티커 */}
       <div className="absolute inset-0 z-50 pointer-events-none">
         {stickers.map((s, i) => (
           <img
             key={i}
             src={s.src}
-            alt="sticker"
-            className="absolute w-[85px] h-[85px] pointer-events-auto select-none"
+            className="absolute w-[90px] h-[90px]"
             style={{ top: s.y, left: s.x }}
-            onClick={(e) => e.stopPropagation()}
             draggable={false}
           />
         ))}
       </div>
 
+      {/* 메모 모달 */}
       <MemoModal
         {...modalContent}
-        onDelete={() => handleDeletePaper(modalContent.id)}
-        isMine={modalContent.isMine}
         isOpen={isMemoModalOpen}
         onClose={() => setIsMemoModalOpen(false)}
+        onDelete={() => handleDeletePaper(modalContent.id)}
         boardTitle={pageTitle}
       />
 
+      {/* 플로팅 버튼 */}
       <FloatingButtons
         mode={2}
         onWriteComplete={handleWriteComplete}
         onDecorateClick={() => setIsDecorateModalOpen(true)}
       />
 
+      {/* 스티커 선택 모달 */}
       {isDecorateModalOpen && (
         <DecorateModal
           onClose={() => setIsDecorateModalOpen(false)}
